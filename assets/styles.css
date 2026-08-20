@@ -174,36 +174,12 @@ h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
   font-size: 0.875rem;
 }
 
-/* ---- KPIs -------------------------------------------------------------- */
-
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin: 24px 0;
-}
-.kpi {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-}
-.kpi-label {
-  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
-  letter-spacing: 0.06em; color: var(--text-muted);
-}
-/* No tabular-nums: equal-width digits make a large standalone figure look gappy. */
-.kpi-value {
-  font-size: 1.75rem; font-weight: 650; letter-spacing: -0.02em;
-  margin: 6px 0 2px; line-height: 1.1;
-}
-.kpi-value.is-pos { color: var(--pos); }
-.kpi-value.is-neg { color: var(--neg); }
-.kpi-note { font-size: 0.75rem; color: var(--text-muted); }
-
 /* ---- controls ---------------------------------------------------------- */
 
-.controls { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.controls {
+  display: flex; align-items: flex-end;
+  gap: 18px; flex-wrap: wrap; margin-bottom: 16px;
+}
 .controls-label {
   font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
   letter-spacing: 0.06em; color: var(--text-muted);
@@ -296,15 +272,117 @@ thead th {
 /* ---- responsive -------------------------------------------------------- */
 
 @media (max-width: 900px) {
-  .kpis { grid-template-columns: repeat(2, 1fr); }
   .chart { height: 340px; }
 }
 @media (max-width: 560px) {
-  .kpis { grid-template-columns: 1fr; gap: 10px; }
   .masthead-inner { flex-direction: column; }
   .masthead-meta { text-align: left; }
   .masthead-links { justify-content: flex-start; }
   .chart { height: 300px; }
-  .kpi-value { font-size: 1.5rem; }
   .card-head { flex-direction: column; }
+}
+
+/* ---- headline section --------------------------------------------------- */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.headline {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 18px;
+  margin: 24px 0;
+  align-items: start;
+}
+.headline-stats, .headline-scale {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+.section-title { font-size: 1rem; font-weight: 650; letter-spacing: -0.005em; }
+.section-sub {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  margin-top: 3px; max-width: 52ch;
+}
+.section-note {
+  font-size: 0.75rem; color: var(--text-muted);
+  margin-top: 12px; line-height: 1.5;
+}
+.section-note a { color: var(--accent); }
+
+.stats-table { margin-top: 12px; }
+.stats-table th[scope="row"] {
+  text-align: left; font-weight: 500;
+  color: var(--text-secondary); font-size: 0.8125rem;
+  white-space: normal;
+}
+.stats-table .stat-value {
+  font-weight: 650; font-size: 0.9375rem;
+  color: var(--text-primary); white-space: nowrap;
+}
+.stats-table .stat-value .is-pos { color: var(--pos); }
+.stats-table .stat-value .is-neg { color: var(--neg); }
+.stats-table .stat-context {
+  text-align: right; font-size: 0.75rem;
+  color: var(--text-muted); white-space: normal;
+}
+.pending {
+  font-weight: 500; font-size: 0.8125rem;
+  color: var(--text-muted); font-style: italic;
+}
+
+/* ---- proportion bars ---------------------------------------------------- */
+
+.scale-bars { margin-top: 14px; display: flex; flex-direction: column; gap: 16px; }
+.scale-head {
+  display: flex; justify-content: space-between;
+  align-items: baseline; gap: 12px; margin-bottom: 5px;
+}
+.scale-label { font-size: 0.8125rem; font-weight: 600; color: var(--text-primary); }
+.scale-pct {
+  font-size: 0.9375rem; font-weight: 650;
+  color: var(--accent); white-space: nowrap;
+}
+.scale-track {
+  height: 10px; background: var(--surface-2);
+  border-radius: 5px; overflow: hidden;
+}
+/* Rounded data-end anchored to the baseline; a sliver stays visible via a
+   minimum width so "1.3%" is never rendered as literally nothing. */
+.scale-fill {
+  display: block; height: 100%;
+  background: var(--accent); border-radius: 5px;
+  min-width: 3px;
+}
+.scale-meta { font-size: 0.6875rem; color: var(--text-muted); margin-top: 5px; line-height: 1.45; }
+.scale-note { color: var(--text-muted); }
+
+/* ---- filter row --------------------------------------------------------- */
+
+.control { display: flex; flex-direction: column; gap: 5px; }
+.control .controls-label { display: block; }
+.select {
+  font: inherit; font-size: 0.8125rem;
+  color: var(--text-primary); background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px; padding: 7px 13px;
+  min-height: 34px; cursor: pointer; min-width: 160px;
+}
+.select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.filter-summary {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  margin-left: auto; padding-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+  .headline { grid-template-columns: 1fr; }
+  .filter-summary { margin-left: 0; width: 100%; }
+}
+@media (max-width: 560px) {
+  .stats-table .stat-context { display: none; }
+  .control, .select { width: 100%; }
 }

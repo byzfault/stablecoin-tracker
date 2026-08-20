@@ -1,0 +1,33 @@
+{
+ "aggregates": [
+  {
+   "as_of": "2025-10-01",
+   "id": "CURRCIR",
+   "label": "US currency in circulation",
+   "note": "Physical notes and coin \u2014 the closest analogue to a bearer digital dollar.",
+   "short": "US cash",
+   "source_url": "https://fred.stlouisfed.org/series/CURRCIR",
+   "value_usd": 2415653000000
+  },
+  {
+   "as_of": "2026-06-01",
+   "id": "M1SL",
+   "label": "US M1 money supply",
+   "note": "Currency plus demand deposits and other liquid deposits.",
+   "short": "US M1",
+   "source_url": "https://fred.stlouisfed.org/series/M1SL",
+   "value_usd": 19831500000000
+  },
+  {
+   "as_of": "2026-06-01",
+   "id": "M2SL",
+   "label": "US M2 money supply",
+   "note": "M1 plus savings, small time deposits and retail money-market funds.",
+   "short": "US M2",
+   "source_url": "https://fred.stlouisfed.org/series/M2SL",
+   "value_usd": 23155200000000
+  }
+ ],
+ "source": "Federal Reserve Economic Data (FRED)",
+ "source_url": "https://fred.stlouisfed.org/"
+}
