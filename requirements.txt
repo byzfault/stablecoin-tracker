@@ -1,0 +1,3 @@
+# The pipeline deliberately depends on one third-party package.
+# Everything else is the Python standard library.
+requests==2.32.3

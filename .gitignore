@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Local experiments — data/ itself IS committed, that is the point of the repo,
+# but anything a local run scratches out under data/tmp/ is not.
+data/tmp/
