@@ -38,6 +38,9 @@
   --series-8: #e34948;  /* TON      */
   --series-other: #9a9a93;
 
+  --surface-selected: #eaf1fb;
+  --border-selected: #c7dbf4;
+
   --grid: #ebebe6;
   --radius: 8px;
   --wrap: 1180px;
@@ -71,6 +74,9 @@
     --series-8: #e66767;
     --series-other: #6f6f69;
 
+    --surface-selected: #16202c;
+    --border-selected: #274058;
+
     --grid: #2a2a28;
   }
 }
@@ -102,6 +108,9 @@
   --series-8: #e66767;
   --series-other: #6f6f69;
 
+  --surface-selected: #16202c;
+  --border-selected: #274058;
+
   --grid: #2a2a28;
 }
 
@@ -129,7 +138,7 @@ body {
 .masthead {
   background: var(--surface-1);
   border-bottom: 1px solid var(--border);
-  padding: 22px 0;
+  padding: 16px 0;
 }
 .masthead-inner {
   display: flex; justify-content: space-between; align-items: flex-start;
@@ -176,9 +185,16 @@ h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
 
 /* ---- controls ---------------------------------------------------------- */
 
+/* The filters are the primary control on the page, so they read as a solid
+   object rather than loose chrome floating above the charts. */
 .controls {
   display: flex; align-items: flex-end;
-  gap: 18px; flex-wrap: wrap; margin-bottom: 16px;
+  gap: 20px; flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  background: var(--surface-selected);
+  border: 1px solid var(--border-selected);
+  border-radius: var(--radius);
 }
 .controls-label {
   font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
@@ -294,7 +310,7 @@ thead th {
   display: grid;
   grid-template-columns: 1.15fr 1fr;
   gap: 18px;
-  margin: 24px 0;
+  margin: 18px 0;
   align-items: start;
 }
 .headline-stats, .headline-scale {
@@ -314,30 +330,35 @@ thead th {
 }
 .section-note a { color: var(--accent); }
 
-.stats-table { margin-top: 12px; }
+.stats-table { margin-top: 10px; }
 .stats-table th[scope="row"] {
   text-align: left; font-weight: 500;
   color: var(--text-secondary); font-size: 0.8125rem;
-  white-space: normal;
+  white-space: nowrap; padding: 10px 10px 10px 0;
 }
+/* The figure is the point of this table, so it carries the weight. No
+   tabular-nums: equal-width digits make a large standalone number look gappy. */
 .stats-table .stat-value {
-  font-weight: 650; font-size: 0.9375rem;
+  font-weight: 650; font-size: 1.5rem; letter-spacing: -0.02em;
   color: var(--text-primary); white-space: nowrap;
+  text-align: right; padding: 8px 10px; font-variant-numeric: normal;
 }
 .stats-table .stat-value .is-pos { color: var(--pos); }
 .stats-table .stat-value .is-neg { color: var(--neg); }
 .stats-table .stat-context {
   text-align: right; font-size: 0.75rem;
-  color: var(--text-muted); white-space: normal;
+  color: var(--text-muted); white-space: nowrap;
+  width: 1%; padding-left: 14px;
 }
+.stats-table tr:last-child th, .stats-table tr:last-child td { border-bottom: 0; }
 .pending {
-  font-weight: 500; font-size: 0.8125rem;
-  color: var(--text-muted); font-style: italic;
+  font-weight: 600; font-size: 1rem;
+  color: var(--text-muted);
 }
 
 /* ---- proportion bars ---------------------------------------------------- */
 
-.scale-bars { margin-top: 14px; display: flex; flex-direction: column; gap: 16px; }
+.scale-bars { margin-top: 12px; display: flex; flex-direction: column; gap: 13px; }
 .scale-head {
   display: flex; justify-content: space-between;
   align-items: baseline; gap: 12px; margin-bottom: 5px;
@@ -366,15 +387,20 @@ thead th {
 .control { display: flex; flex-direction: column; gap: 5px; }
 .control .controls-label { display: block; }
 .select {
-  font: inherit; font-size: 0.8125rem;
+  font: inherit; font-size: 0.875rem; font-weight: 600;
   color: var(--text-primary); background: var(--surface-1);
   border: 1px solid var(--border-strong);
-  border-radius: 999px; padding: 7px 13px;
-  min-height: 34px; cursor: pointer; min-width: 160px;
+  border-radius: 999px; padding: 8px 14px;
+  min-height: 38px; cursor: pointer; min-width: 170px;
+}
+/* A non-default selection is stated, so a filtered page never looks unfiltered. */
+.select.is-filtered {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
 }
 .select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .filter-summary {
-  font-size: 0.8125rem; color: var(--text-secondary);
+  font-size: 0.875rem; color: var(--text-primary); font-weight: 600;
   margin-left: auto; padding-bottom: 8px;
 }
 

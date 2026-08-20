@@ -234,44 +234,28 @@
     document.getElementById('asOf').textContent = fmtDate(s.as_of);
 
     var up = (s.change_30d_pct || 0) >= 0;
+
+    /* Deliberately short. The share-of-money figures are not repeated here —
+     * they are the panel immediately to the right, and saying them twice makes
+     * both weaker while pushing the charts below the fold. */
     var rows = [
-      ['Total supply outstanding', usd(s.total_supply),
-       'USD-pegged stablecoins, every chain'],
+      ['Total supply', usd(s.total_supply), 'outstanding'],
       ['30-day change',
        '<span class="' + (up ? 'is-pos' : 'is-neg') + '">'
-         + (up ? '+' : '') + (s.change_30d_pct === null ? '—' : s.change_30d_pct.toFixed(2) + '%')
+         + (up ? '+' : '') + (s.change_30d_pct === null ? '—' : s.change_30d_pct.toFixed(1) + '%')
          + '</span>',
-       (up ? '+' : '−') + usd(Math.abs(s.change_30d || 0)) + ' against 30 days earlier'],
-      ['Largest chain', escapeHtml(s.top_chain.name),
-       usd(s.top_chain.supply) + ' · ' + s.top_chain.share_pct.toFixed(1) + '% of supply'],
-      ['Largest issuer', escapeHtml(s.top_issuer.name),
-       usd(s.top_issuer.supply) + ' · ' + s.top_issuer.share_pct.toFixed(1) + '% of supply']
+       (up ? '+' : '−') + usd(Math.abs(s.change_30d || 0))],
+      ['Top chain', escapeHtml(s.top_chain.name), s.top_chain.share_pct.toFixed(0) + '% of supply'],
+      ['Top issuer', escapeHtml(s.top_issuer.name), s.top_issuer.share_pct.toFixed(0) + '% of supply'],
+      ['Transfer volume', '<span class="pending">v2</span>', 'supply ≠ throughput']
     ];
-
-    (ref && ref.aggregates ? ref.aggregates : []).forEach(function (a) {
-      rows.push([
-        'Share of ' + escapeHtml(a.short),
-        (s.total_supply / a.value_usd * 100).toFixed(2) + '%',
-        escapeHtml(a.short) + ' ' + usd(a.value_usd) + ' · ' + fmtMonth(a.as_of)
-      ]);
-    });
-
-    /* Transfer volume is a different measurement from supply and this API does
-     * not carry it. Showing the gap explicitly is better than quietly implying
-     * the supply figure is a volume figure. */
-    rows.push([
-      'Cumulative transfer volume',
-      '<span class="pending">Not yet available</span>',
-      'Planned for v2 via Dune — supply and volume are different measurements'
-    ]);
 
     document.getElementById('statsBody').innerHTML = rows.map(function (r) {
       return '<tr><th scope="row">' + r[0] + '</th><td class="stat-value">' + r[1]
            + '</td><td class="stat-context">' + r[2] + '</td></tr>';
     }).join('');
 
-    document.getElementById('statsNote').textContent =
-      'Supply is the outstanding circulating amount, not throughput.';
+    document.getElementById('statsNote').textContent = '';
   }
 
   /* Proportion bars rather than a pie: stablecoins are ~1% of M2, and a 1%
@@ -320,7 +304,9 @@
         + (meta.errors.length === 1 ? '' : 's') + '); some figures may be from an earlier snapshot.');
     }
     if (ageDays > 2) messages.push('Last successful refresh was ' + Math.floor(ageDays) + ' days ago.');
-    if (meta.data_notes && meta.data_notes.length) messages.push(meta.data_notes.join(' '));
+    // data_notes are deliberately NOT surfaced here. They record upstream quirks
+    // the pipeline handled — a single clamped balance from March 2025 is an audit
+    // detail for meta.json and METHODOLOGY.md, not a banner above the charts.
 
     if (messages.length) { strip.textContent = messages.join(' '); strip.hidden = false; }
   }
@@ -407,10 +393,14 @@
     });
 
     document.getElementById('chainFilter').addEventListener('change', function () {
-      state.chain = this.value; draw();
+      state.chain = this.value;
+      this.classList.toggle('is-filtered', this.value !== ALL);
+      draw();
     });
     document.getElementById('issuerFilter').addEventListener('change', function () {
-      state.issuer = this.value; draw();
+      state.issuer = this.value;
+      this.classList.toggle('is-filtered', this.value !== ALL);
+      draw();
     });
 
     document.querySelectorAll('.table-toggle').forEach(function (button) {
