@@ -148,16 +148,6 @@ h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
 .tagline { color: var(--text-secondary); font-size: 0.875rem; margin-top: 2px; }
 .masthead-meta { text-align: right; }
 .asof { font-size: 0.8125rem; color: var(--text-muted); }
-.masthead-links {
-  display: flex; gap: 14px; align-items: center;
-  margin-top: 6px; justify-content: flex-end;
-}
-.masthead-links a, .theme-toggle {
-  font-size: 0.8125rem; color: var(--accent);
-  text-decoration: none; background: none; border: 0;
-  cursor: pointer; font-family: inherit; padding: 0;
-}
-.masthead-links a:hover, .theme-toggle:hover { text-decoration: underline; }
 
 /* ---- status ------------------------------------------------------------ */
 
@@ -293,7 +283,6 @@ thead th {
 @media (max-width: 560px) {
   .masthead-inner { flex-direction: column; }
   .masthead-meta { text-align: left; }
-  .masthead-links { justify-content: flex-start; }
   .chart { height: 300px; }
   .card-head { flex-direction: column; }
 }

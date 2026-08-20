@@ -413,16 +413,27 @@
       });
     });
 
-    document.getElementById('themeToggle').addEventListener('click', function () {
-      var isDark = document.documentElement.getAttribute('data-theme') === 'dark'
-        || (!document.documentElement.hasAttribute('data-theme')
-            && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-      // Series colours are read from CSS variables when the chart is built, so a
-      // theme change means rebuilding rather than restyling.
-      renderScale();
-      draw();
-    });
+    // Optional: present only if the markup includes a theme control. Colours are
+    // read from CSS variables when a chart is built, so switching theme means
+    // rebuilding the charts rather than restyling them.
+    var themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', function () {
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+          || (!document.documentElement.hasAttribute('data-theme')
+              && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        renderScale();
+        draw();
+      });
+    }
+
+    // With no manual control, follow the OS setting live.
+    var media = window.matchMedia('(prefers-color-scheme: dark)');
+    var onSchemeChange = function () {
+      if (!document.documentElement.hasAttribute('data-theme')) { renderScale(); draw(); }
+    };
+    if (media.addEventListener) media.addEventListener('change', onSchemeChange);
 
     var resizeTimer;
     window.addEventListener('resize', function () {
