@@ -1,0 +1,27 @@
+{
+ "errors": [],
+ "files_written": [
+  "chains.json",
+  "issuers.json",
+  "summary.json"
+ ],
+ "generated_at": "2026-08-20T10:18:10+00:00",
+ "peg_type": "peggedUSD",
+ "source": "https://stablecoins.llama.fi",
+ "source_name": "DefiLlama",
+ "status": "ok",
+ "tracked_chains": [
+  "Ethereum",
+  "Tron",
+  "Solana",
+  "BSC",
+  "Base",
+  "Arbitrum",
+  "Polygon",
+  "TON"
+ ],
+ "tracked_issuers": [
+  "USDT",
+  "USDC"
+ ]
+}

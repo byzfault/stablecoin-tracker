@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stablecoin Flows — supply by chain and issuer</title>
+<meta name="description" content="A static dashboard tracking stablecoin supply across chains and issuers, refreshed daily from DefiLlama.">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <div>
+      <h1>Stablecoin&nbsp;Flows</h1>
+      <p class="tagline">Where stablecoin supply lives, and who issues it.</p>
+    </div>
+    <div class="masthead-meta">
+      <p class="asof">Data as of <time id="asOf">—</time></p>
+      <nav class="masthead-links">
+        <a href="METHODOLOGY.md">Methodology</a>
+        <a href="https://github.com/byzfault/stablecoin-tracker">Source</a>
+        <button type="button" id="themeToggle" class="theme-toggle" aria-label="Switch colour theme">Theme</button>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <!-- Status strip: only shown when the last refresh was incomplete or stale. -->
+  <p class="status-strip" id="statusStrip" hidden></p>
+
+  <!-- KPIs. Hero figures, not charts: a single number does not need eight hues. -->
+  <section class="kpis" aria-label="Headline figures">
+    <article class="kpi">
+      <h2 class="kpi-label">Total supply</h2>
+      <p class="kpi-value" id="kpiTotal">—</p>
+      <p class="kpi-note">USD-pegged stablecoins, all chains</p>
+    </article>
+    <article class="kpi">
+      <h2 class="kpi-label">30-day change</h2>
+      <p class="kpi-value" id="kpiChange">—</p>
+      <p class="kpi-note" id="kpiChangeNote">against supply 30 days earlier</p>
+    </article>
+    <article class="kpi">
+      <h2 class="kpi-label">Largest chain</h2>
+      <p class="kpi-value" id="kpiChain">—</p>
+      <p class="kpi-note" id="kpiChainNote">&nbsp;</p>
+    </article>
+    <article class="kpi">
+      <h2 class="kpi-label">Largest issuer</h2>
+      <p class="kpi-value" id="kpiIssuer">—</p>
+      <p class="kpi-note" id="kpiIssuerNote">&nbsp;</p>
+    </article>
+  </section>
+
+  <!-- One filter row, above every chart — never per-card. -->
+  <div class="controls" role="group" aria-label="Time range">
+    <span class="controls-label">Range</span>
+    <div class="segmented" id="rangeControls">
+      <button type="button" data-days="90">90d</button>
+      <button type="button" data-days="365">1y</button>
+      <button type="button" data-days="1095">3y</button>
+      <button type="button" data-days="0" class="is-active">All</button>
+    </div>
+  </div>
+
+  <section class="card" aria-labelledby="chartChainsTitle">
+    <div class="card-head">
+      <div>
+        <h2 id="chartChainsTitle">Supply by chain</h2>
+        <p class="card-sub">Circulating USD-pegged supply, stacked. “Other” is the total minus the eight tracked chains.</p>
+      </div>
+      <button type="button" class="table-toggle" data-table="tableChains" aria-expanded="false">Table</button>
+    </div>
+    <div class="chart" id="chartChains" role="img" aria-label="Stacked area chart of stablecoin supply by chain over time"></div>
+    <div class="table-wrap" id="tableChains" hidden></div>
+  </section>
+
+  <section class="card" aria-labelledby="chartShareTitle">
+    <div class="card-head">
+      <div>
+        <h2 id="chartShareTitle">Chain market share</h2>
+        <p class="card-sub">The same data as a share of total supply, so shifts between chains are visible independently of the market growing.</p>
+      </div>
+      <button type="button" class="table-toggle" data-table="tableShare" aria-expanded="false">Table</button>
+    </div>
+    <div class="chart" id="chartShare" role="img" aria-label="One hundred percent stacked area chart of chain market share over time"></div>
+    <div class="table-wrap" id="tableShare" hidden></div>
+  </section>
+
+  <section class="card" aria-labelledby="chartIssuersTitle">
+    <div class="card-head">
+      <div>
+        <h2 id="chartIssuersTitle">Supply by issuer</h2>
+        <p class="card-sub">USDT and USDC against everything else. “Other” is the total minus those two.</p>
+      </div>
+      <button type="button" class="table-toggle" data-table="tableIssuers" aria-expanded="false">Table</button>
+    </div>
+    <div class="chart" id="chartIssuers" role="img" aria-label="Stacked area chart of stablecoin supply by issuer over time"></div>
+    <div class="table-wrap" id="tableIssuers" hidden></div>
+  </section>
+
+  <p class="load-error" id="loadError" hidden></p>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>
+      Data from <a href="https://defillama.com/stablecoins">DefiLlama</a>, via their
+      <a href="https://stablecoins.llama.fi">free stablecoins API</a>. This dashboard is not
+      affiliated with DefiLlama.
+    </p>
+    <p class="footer-meta">
+      Static site — every figure is read from JSON committed to the repository, with no API
+      calls from your browser. Refreshed daily. <a href="METHODOLOGY.md">Methodology</a> ·
+      <a href="https://github.com/byzfault/stablecoin-tracker">Source and pipeline</a>
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,310 @@
+/* Stablecoin Flows — styles.
+ *
+ * Colour is defined once, by role, as custom properties. The categorical series
+ * slots are a validated palette: every adjacent pair clears the colourblind and
+ * normal-vision separation floors in both light and dark mode. Do not substitute
+ * a hue without re-running the validator.
+ *
+ * "Other" is deliberately NOT a categorical slot. It is a residual bucket rather
+ * than a peer entity, so it takes a neutral grey and stays recessive — which also
+ * keeps the palette at eight hues instead of inventing a ninth.
+ */
+
+:root {
+  color-scheme: light;
+
+  --surface-page: #f6f6f4;
+  --surface-1: #fcfcfb;
+  --surface-2: #f0f0ed;
+  --border: #e2e2dd;
+  --border-strong: #cfcfc8;
+
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #7b7a75;
+
+  --accent: #2a78d6;
+  --pos: #1a7f4b;
+  --neg: #c0392f;
+
+  /* Categorical slots 1–8, light mode. */
+  --series-1: #2a78d6;  /* Ethereum */
+  --series-2: #eb6834;  /* Tron     */
+  --series-3: #1baf7a;  /* Solana   */
+  --series-4: #eda100;  /* BSC      */
+  --series-5: #e87ba4;  /* Base     */
+  --series-6: #008300;  /* Arbitrum */
+  --series-7: #4a3aa7;  /* Polygon  */
+  --series-8: #e34948;  /* TON      */
+  --series-other: #9a9a93;
+
+  --grid: #ebebe6;
+  --radius: 8px;
+  --wrap: 1180px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --surface-page: #121211;
+    --surface-1: #1a1a19;
+    --surface-2: #232322;
+    --border: #2e2e2c;
+    --border-strong: #3d3d3a;
+
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #93928a;
+
+    --accent: #3987e5;
+    --pos: #3fae74;
+    --neg: #e66767;
+
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-8: #e66767;
+    --series-other: #6f6f69;
+
+    --grid: #2a2a28;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --surface-page: #121211;
+  --surface-1: #1a1a19;
+  --surface-2: #232322;
+  --border: #2e2e2c;
+  --border-strong: #3d3d3a;
+
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #93928a;
+
+  --accent: #3987e5;
+  --pos: #3fae74;
+  --neg: #e66767;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --series-other: #6f6f69;
+
+  --grid: #2a2a28;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+
+.skip-link {
+  position: absolute; left: -9999px;
+  background: var(--surface-1); color: var(--text-primary);
+  padding: 10px 14px; border-radius: var(--radius); z-index: 10;
+}
+.skip-link:focus { left: 12px; top: 12px; }
+
+/* ---- masthead ---------------------------------------------------------- */
+
+.masthead {
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border);
+  padding: 22px 0;
+}
+.masthead-inner {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 20px; flex-wrap: wrap;
+}
+h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
+.tagline { color: var(--text-secondary); font-size: 0.875rem; margin-top: 2px; }
+.masthead-meta { text-align: right; }
+.asof { font-size: 0.8125rem; color: var(--text-muted); }
+.masthead-links {
+  display: flex; gap: 14px; align-items: center;
+  margin-top: 6px; justify-content: flex-end;
+}
+.masthead-links a, .theme-toggle {
+  font-size: 0.8125rem; color: var(--accent);
+  text-decoration: none; background: none; border: 0;
+  cursor: pointer; font-family: inherit; padding: 0;
+}
+.masthead-links a:hover, .theme-toggle:hover { text-decoration: underline; }
+
+/* ---- status ------------------------------------------------------------ */
+
+.status-strip {
+  margin: 20px 0 0;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid #e3c98a;
+  background: #fdf6e3;
+  color: #7a5c12;
+  font-size: 0.8125rem;
+}
+:root[data-theme="dark"] .status-strip,
+:root:not([data-theme="light"]) .status-strip:where(.dark-ok) { background: #2a2413; border-color: #4d431f; color: #d6bd7a; }
+
+.load-error {
+  margin: 20px 0;
+  padding: 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ---- KPIs -------------------------------------------------------------- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 24px 0;
+}
+.kpi {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.kpi-label {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted);
+}
+/* No tabular-nums: equal-width digits make a large standalone figure look gappy. */
+.kpi-value {
+  font-size: 1.75rem; font-weight: 650; letter-spacing: -0.02em;
+  margin: 6px 0 2px; line-height: 1.1;
+}
+.kpi-value.is-pos { color: var(--pos); }
+.kpi-value.is-neg { color: var(--neg); }
+.kpi-note { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ---- controls ---------------------------------------------------------- */
+
+.controls { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.controls-label {
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--text-muted);
+}
+.segmented {
+  display: inline-flex;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+}
+.segmented button {
+  font: inherit; font-size: 0.8125rem;
+  border: 0; background: none; cursor: pointer;
+  color: var(--text-secondary);
+  padding: 5px 14px; border-radius: 999px;
+  min-height: 32px; /* comfortable touch target */
+}
+.segmented button:hover { color: var(--text-primary); }
+.segmented button.is-active {
+  background: var(--surface-1);
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+/* ---- cards ------------------------------------------------------------- */
+
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 18px 8px;
+  margin-bottom: 18px;
+}
+.card-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px; margin-bottom: 6px;
+}
+.card-head h2 { font-size: 1rem; font-weight: 650; letter-spacing: -0.005em; }
+.card-sub {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  margin-top: 3px; max-width: 62ch;
+}
+.table-toggle {
+  font: inherit; font-size: 0.75rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-1); color: var(--text-secondary);
+  border-radius: 6px; padding: 5px 11px; cursor: pointer;
+  flex: 0 0 auto; min-height: 30px;
+}
+.table-toggle:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+/* Height includes room for the x-axis band, so it is never clipped. */
+.chart { width: 100%; height: 380px; }
+
+/* ---- table view -------------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; margin: 4px 0 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.8125rem; }
+th, td {
+  text-align: right; padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* correct here: a column of figures should align */
+}
+th:first-child, td:first-child { text-align: left; }
+thead th {
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted); font-weight: 600;
+}
+.swatch {
+  display: inline-block; width: 9px; height: 9px;
+  border-radius: 2px; margin-right: 7px; vertical-align: baseline;
+}
+
+/* ---- footer ------------------------------------------------------------ */
+
+.footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface-1);
+  margin-top: 34px;
+  padding: 22px 0 30px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+.footer a { color: var(--accent); }
+.footer-meta { color: var(--text-muted); margin-top: 6px; font-size: 0.75rem; }
+
+/* ---- responsive -------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .kpis { grid-template-columns: repeat(2, 1fr); }
+  .chart { height: 340px; }
+}
+@media (max-width: 560px) {
+  .kpis { grid-template-columns: 1fr; gap: 10px; }
+  .masthead-inner { flex-direction: column; }
+  .masthead-meta { text-align: left; }
+  .masthead-links { justify-content: flex-start; }
+  .chart { height: 300px; }
+  .kpi-value { font-size: 1.5rem; }
+  .card-head { flex-direction: column; }
+}

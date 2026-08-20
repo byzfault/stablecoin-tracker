@@ -1,0 +1,17 @@
+{
+ "as_of": 1787184000,
+ "change_30d": -745880343,
+ "change_30d_pct": -0.24,
+ "peg_type": "peggedUSD",
+ "top_chain": {
+  "name": "Ethereum",
+  "share_pct": 48.83,
+  "supply": 146753550863
+ },
+ "top_issuer": {
+  "name": "USDT",
+  "share_pct": 59.46,
+  "supply": 182929761169
+ },
+ "total_supply": 307111883840
+}
