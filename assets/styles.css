@@ -273,7 +273,6 @@ thead th {
   color: var(--text-secondary);
 }
 .footer a { color: var(--accent); }
-.footer-meta { color: var(--text-muted); margin-top: 6px; font-size: 0.75rem; }
 
 /* ---- responsive -------------------------------------------------------- */
 
