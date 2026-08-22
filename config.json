@@ -5,6 +5,12 @@
     "execute_min_interval_hours": 24,
     "execution_timeout_seconds": 900,
     "performance": "medium",
-    "max_rows": 200000
+    "max_rows": 200000,
+    "cost_assumptions": {
+      "send_amount_usd": 200,
+      "network_fee_usd": 0.45,
+      "venue_withdrawal_fee_usd": 1.0,
+      "note": "Assumption, not a measurement. A blended stablecoin transfer fee plus a typical exchange withdrawal fee on the reference $200 send. It excludes the on-ramp and off-ramp spreads, which is where most of the real cost of this route sits, so treat it as a floor."
+    }
   }
 }
