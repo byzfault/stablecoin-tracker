@@ -28,6 +28,9 @@
    "value_usd": 23155200000000
   }
  ],
+ "fetched_at": "2026-08-22T18:06:18+00:00",
  "source": "Federal Reserve Economic Data (FRED)",
- "source_url": "https://fred.stlouisfed.org/"
+ "source_name": "FRED, St. Louis Fed",
+ "source_url": "https://fred.stlouisfed.org/",
+ "update_cadence": "monthly, with a multi-month publication lag"
 }
