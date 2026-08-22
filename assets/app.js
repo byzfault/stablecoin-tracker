@@ -263,6 +263,15 @@
     }).join('');
 
     document.getElementById('statsNote').textContent = '';
+
+    renderPanelMeta('headlineMeta', {
+      asOf: new Date(s.as_of * 1000).toISOString(),
+      fetchedAt: s.fetched_at,
+      source: s.source_name || 'DefiLlama',
+      sourceUrl: s.source_url,
+      cadence: s.update_cadence || 'daily',
+      staleAfterHours: 48
+    });
   }
 
   /* Proportion bars rather than a pie: stablecoins are ~1% of M2, and a 1%
@@ -298,6 +307,19 @@
       'Stablecoin supply ' + usd(s.total_supply) + ' against aggregates from '
       + '<a href="' + ref.source_url + '">FRED</a>. Series publish on different schedules, '
       + 'so each carries its own date.';
+
+    /* The aggregates are months old the day they publish, so the printed date
+     * is the newest series date rather than the fetch time — while staleness is
+     * still judged on the fetch, which is the part the pipeline controls. */
+    var newest = ref.aggregates.map(function (a) { return a.as_of; }).sort().pop();
+    renderPanelMeta('scaleMeta', {
+      asOf: newest ? newest + 'T00:00:00Z' : ref.fetched_at,
+      fetchedAt: ref.fetched_at,
+      source: ref.source_name || 'FRED, St. Louis Fed',
+      sourceUrl: ref.source_url,
+      cadence: ref.update_cadence || 'monthly, published with a lag',
+      staleAfterHours: 24 * 40
+    });
   }
 
   function renderStatus(meta) {
@@ -339,14 +361,16 @@
     return isNaN(t) ? null : (Date.now() - t) / 3600000;
   }
 
-  /* Stale is a property of the data, not of the fetch: a run that succeeds at
-   * 06:00 and serves a snapshot from three days ago is stale, and saying
-   * "updated this morning" about it would be the lie the badge exists to
-   * prevent. */
+  /* Two different timestamps, deliberately not conflated. `asOf` is the age of
+   * the data itself and is what gets printed — FRED's M2 series is months old
+   * by publication and always will be. `fetchedAt` is when the pipeline last
+   * refreshed the file, and that is what staleness is measured against, because
+   * the thing worth flagging is a fetch that stopped happening, not a series
+   * that publishes slowly. */
   function renderPanelMeta(elId, opts) {
     var el = document.getElementById(elId);
     if (!el) return;
-    var age = hoursSince(opts.asOf);
+    var age = hoursSince(opts.fetchedAt || opts.asOf);
     var stale = opts.stale || (age !== null && age > opts.staleAfterHours);
     var parts = ['Data as of <time datetime="' + escapeHtml(opts.asOf || '') + '">'
                  + fmtStamp(opts.asOf) + '</time>'];
@@ -392,6 +416,7 @@
 
     renderPanelMeta('corridorMeta', {
       asOf: data.data_as_of || data.fetched_at,
+      fetchedAt: data.fetched_at,
       source: data.source_name || 'Dune Analytics',
       sourceUrl: data.source_url,
       cadence: data.update_cadence || 'daily',
@@ -619,6 +644,18 @@
     charts.push(renderChart('chartChains', byChain, CHAIN_SLOT, chainOrder, false));
     charts.push(renderChart('chartShare', byChain, CHAIN_SLOT, chainOrder, true));
     charts.push(renderChart('chartIssuers', byIssuer, ISSUER_SLOT, issuerOrder, false));
+
+    var m = state.data.matrix;
+    ['chainsMeta', 'shareMeta', 'issuersMeta'].forEach(function (id) {
+      renderPanelMeta(id, {
+        asOf: new Date(m.dates[m.dates.length - 1] * 1000).toISOString(),
+        fetchedAt: m.fetched_at,
+        source: m.source_name || 'DefiLlama',
+        sourceUrl: m.source_url,
+        cadence: m.update_cadence || 'daily',
+        staleAfterHours: 48
+      });
+    });
 
     renderTable('tableChains', byChain, CHAIN_SLOT, chainOrder);
     renderTable('tableShare', byChain, CHAIN_SLOT, chainOrder);

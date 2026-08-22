@@ -22,4 +22,110 @@ Section headings only. Each section is a placeholder to be written.
 
 ## Known limitations
 
+## Corridor Proxy
+
+This section covers the "Corridor signals" panel only. Everything in it is
+inferred, and the inference is worth stating in full before any number from it
+is quoted.
+
+### What is actually measured
+
+A saved Dune query (`queries/corridor_flows.sql`) sums USDT and USDC transfers
+over the last 90 days where **both** the sending and the receiving address
+resolve to a labelled centralised exchange in Dune's `cex.addresses` table,
+grouped by venue pair, token and day. Transfers within a single venue are
+excluded as wallet housekeeping.
+
+So the underlying measurement is: *value moving between exchanges*. It is not
+remittance data, and no step downstream turns it into remittance data.
+
+### Venue mapping
+
+`data/venue_markets.csv` maps each venue to a home market (ISO-3166 alpha-3) and
+a World Bank region, with a confidence rating. A venue-pair flow becomes a
+market-pair flow by looking up both ends. The mapping is hand-curated, it is the
+weakest link in the module, and it is committed as data so it can be argued
+with.
+
+Three rules constrain it:
+
+* A flow touching a venue whose home market is `GLOBAL`, or a venue absent from
+  the map, is **unattributed** and never assigned to a corridor. Unknown
+  defaults to unattributed, so an unmaintained map understates corridors rather
+  than inventing them.
+* Two venues in the same market are **domestic**, not a corridor.
+* A corridor inherits the **confidence of its weakest venue mapping**, shown in
+  the table. `low` means the home-market claim itself is shaky — Yellow Card
+  operates across roughly twenty African countries, and pinning it to Nigeria is
+  a simplification, not a fact.
+
+The panel leads with the share of labelled volume that survived these rules.
+On real data that share is small. That is the honest result, not a defect to be
+tuned away.
+
+### The GLOBAL bucket
+
+Binance, OKX, Bybit, Coinbase and Kraken serve every market at once. A transfer
+from Bitso to Binance says nothing about where the money went next: it may have
+been a Mexican user moving to a deeper order book, a market maker rebalancing,
+or treasury movement with no user behind it at all. Attributing that flow to a
+corridor would be inventing a geography, so it is counted, reported, and left
+out of every corridor.
+
+This is the single largest reason the attributed share is low. Most
+exchange-to-exchange stablecoin volume touches a global venue at one end.
+
+### Exchange-to-exchange undercount
+
+The proxy misses more than it catches, and in a biased direction:
+
+* **Both ends must be labelled.** A user withdrawing to self-custody, paying a
+  merchant, or cashing out to a bank is invisible. Retail remittance mostly does
+  not look like an exchange-to-exchange transfer.
+* **Tron is not covered.** Dune's token transfer coverage is EVM chains plus
+  Solana. Tron is the largest retail USDT rail in most of the markets this panel
+  cares about, so every regional total is a floor.
+* **Labels are community-maintained.** Global venues are labelled thoroughly;
+  regional venues patchily or not at all. A venue with no labels is
+  indistinguishable from a venue with no flow. The build writes out the venues
+  it saw but could not map, and the mapped venues it never saw, so the gap stays
+  visible.
+* **Venues net internally and settle in batches.** One on-chain transfer can
+  represent thousands of user transactions, or none.
+
+### Cost comparison
+
+The traditional figure is the World Bank's average cost of sending remittances
+to the destination country. Remittance Prices Worldwide publishes true
+corridor-level costs quarterly but blocks automated download, so what is fetched
+is WDI `SI.RMT.COST.IB.ZS` — compiled from the same survey, averaged across all
+of that country's corridors. Real corridor figures can be dropped in as
+`data/rpw_corridors.csv` and take precedence; the panel labels which is in use
+and prints the observation year, which currently runs two to three years behind.
+
+The on-chain figure is an **assumption, not a measurement**: a blended network
+fee plus a typical exchange withdrawal fee on a $200 send, set in `config.json`.
+It excludes the on-ramp and off-ramp spreads, which is where most of the real
+cost of this route sits. It is a floor.
+
+The two are shown as separate bars rather than a ratio on purpose. A "12x
+cheaper" headline would be the most quotable claim on the page and the least
+defensible, since one side is an assumed fee and the other is a measured all-in
+price including cash handling and FX.
+
+### Traditional volume context
+
+Where a KNOMAD bilateral matrix is available, the corridor shows that pair's
+estimated annual volume. Where it is not, it falls back to total remittances
+received by the destination country from all sources (`BX.TRF.PWKR.CD.DT`),
+labelled as such. The two are an order of magnitude apart and the table says
+which one it is showing.
+
+### What this panel is for
+
+A shape and a floor: which market pairs show meaningful exchange-to-exchange
+stablecoin settlement, and how that is trending. It is not a measure of
+stablecoin remittance volume, and any comparison to the traditional figures is a
+comparison between a proxy and a measurement.
+
 ## Changelog

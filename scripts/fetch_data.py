@@ -508,12 +508,35 @@ def fetch_reference(session: requests.Session, raw_dir: Path) -> tuple[dict[str,
 # --------------------------------------------------------------------------- #
 
 
-def write_json(path: Path, payload: Any) -> None:
+def write_json(
+    path: Path,
+    payload: Any,
+    *,
+    source_name: str | None = None,
+    source_url: str | None = None,
+    cadence: str | None = None,
+) -> None:
     """Write JSON with a trailing newline and stable key order.
 
     Sorted keys and a fixed separator keep daily commits to genuine changes
     rather than incidental reordering.
+
+    Every snapshot is stamped with ``fetched_at`` and, where the caller supplies
+    them, its source and refresh cadence. The dashboard prints those on the
+    panel that renders the file: a figure shown without a date is asking to be
+    believed on trust it has not earned, and a single generated_at in meta.json
+    cannot say that reference.json is four months old while chains.json is four
+    hours old.
     """
+    if isinstance(payload, dict):
+        payload = dict(payload)
+        payload.setdefault("fetched_at", datetime.now(timezone.utc).isoformat(timespec="seconds"))
+        if source_name:
+            payload.setdefault("source_name", source_name)
+        if source_url:
+            payload.setdefault("source_url", source_url)
+        if cadence:
+            payload.setdefault("update_cadence", cadence)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=1, sort_keys=True)
@@ -674,14 +697,16 @@ def main() -> int:
     # missing input leaves the previous file untouched, so the dashboard keeps
     # showing the last good data instead of going blank.
     if isinstance(all_chart, list) and chain_charts:
-        write_json(out_dir / "chains.json", build_chains(all_chart, chain_charts))
+        write_json(out_dir / "chains.json", build_chains(all_chart, chain_charts),
+                   source_name="DefiLlama", source_url=BASE_URL, cadence="daily")
         written.append("chains.json")
     else:
         logger.error("Skipping chains.json — keeping the previous snapshot")
 
     if isinstance(all_chart, list) and isinstance(chains_now, list) and isinstance(assets_payload, dict):
         assets = assets_payload.get("peggedAssets", [])
-        write_json(out_dir / "summary.json", build_summary(all_chart, chains_now, assets))
+        write_json(out_dir / "summary.json", build_summary(all_chart, chains_now, assets),
+                   source_name="DefiLlama", source_url=BASE_URL, cadence="daily")
         written.append("summary.json")
     else:
         logger.error("Skipping summary.json — keeping the previous snapshot")
@@ -704,14 +729,15 @@ def main() -> int:
         errors.extend(issuer_errors)
 
         if isinstance(all_chart, list) and issuer_totals:
-            write_json(out_dir / "issuers.json", build_issuers(all_chart, issuer_totals))
+            write_json(out_dir / "issuers.json", build_issuers(all_chart, issuer_totals),
+                       source_name="DefiLlama", source_url=BASE_URL, cadence="daily")
             written.append("issuers.json")
         else:
             logger.error("Skipping issuers.json — keeping the previous snapshot")
 
         if isinstance(all_chart, list) and issuer_totals and chain_charts:
             matrix = build_matrix(all_chart, chain_charts, issuer_totals, issuer_by_chain)
-            write_json(out_dir / "matrix.json", matrix)
+            write_json(out_dir / "matrix.json", matrix, source_name="DefiLlama", source_url=BASE_URL, cadence="daily")
             written.append("matrix.json")
             if matrix["negative_cells_clamped"]:
                 data_notes.append(
@@ -725,7 +751,10 @@ def main() -> int:
     reference, reference_errors = fetch_reference(session, raw_dir)
     errors.extend(reference_errors)
     if reference["aggregates"]:
-        write_json(out_dir / "reference.json", reference)
+        write_json(out_dir / "reference.json", reference,
+                   source_name="FRED, St. Louis Fed",
+                   source_url="https://fred.stlouisfed.org/",
+                   cadence="monthly, with a multi-month publication lag")
         written.append("reference.json")
     else:
         logger.error("Skipping reference.json — keeping the previous snapshot")

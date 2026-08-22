@@ -1,0 +1,56 @@
+# Monthly refresh: World Bank remittance costs and volumes.
+#
+# These series are annual and lag by two or three years, so fetching them daily
+# would be noise. The job exists mostly to notice when a URL rots: KNOMAD's
+# host has already moved once, and finding that out from a red build beats
+# finding it out from a reader.
+name: Monthly World Bank refresh
+
+on:
+  schedule:
+    - cron: "40 5 3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch World Bank remittance data
+        run: python scripts/fetch_worldbank.py
+
+      # The corridor panel prints these figures, so it is rebuilt in the same
+      # run rather than waiting for tomorrow's daily job.
+      - name: Rebuild corridors
+        run: python scripts/build_corridors.py
+
+      - name: Commit snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "World Bank refresh $(date -u +%Y-%m)"
+            git push
+          fi
+
+      - name: Check data freshness
+        run: python scripts/check_freshness.py

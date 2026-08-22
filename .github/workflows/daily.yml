@@ -1,0 +1,63 @@
+# Daily refresh: DefiLlama supply, Dune corridor flows, and the corridor build.
+#
+# The ordering matters. Data is committed *before* the freshness check runs, so
+# a partial refresh still publishes what it did retrieve. The check then fails
+# the job loudly, which is what sends the email — it is a report on the run, not
+# a gate on the deploy.
+name: Daily data refresh
+
+on:
+  schedule:
+    # 06:12 UTC. Off the hour on purpose: GitHub's scheduler queues heavily at
+    # :00 and a shifted minute usually starts sooner.
+    - cron: "12 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch stablecoin supply (DefiLlama, FRED)
+        run: python scripts/fetch_data.py
+
+      - name: Fetch corridor flows (Dune)
+        env:
+          DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
+        run: python scripts/fetch_dune.py
+
+      - name: Build corridors
+        run: python scripts/build_corridors.py
+
+      - name: Commit snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Data refresh $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      # Last, and after the push. Any snapshot that has stopped refreshing, or
+      # any error the fetchers recorded, fails the job here.
+      - name: Check data freshness
+        run: python scripts/check_freshness.py

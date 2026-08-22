@@ -48,6 +48,7 @@
         </tbody>
       </table>
       <p class="section-note" id="statsNote"></p>
+      <p class="panel-meta" id="headlineMeta"></p>
     </div>
 
     <div class="headline-scale">
@@ -58,6 +59,7 @@
       </p>
       <div id="scaleBars" class="scale-bars"></div>
       <p class="section-note" id="scaleNote"></p>
+      <p class="panel-meta" id="scaleMeta"></p>
     </div>
   </section>
 
@@ -96,6 +98,7 @@
       <button type="button" class="table-toggle" data-table="tableChains" aria-expanded="false">Table</button>
     </div>
     <div class="chart" id="chartChains" role="img" aria-label="Stacked area chart of stablecoin supply by chain over time"></div>
+    <p class="panel-meta" id="chainsMeta"></p>
     <div class="table-wrap" id="tableChains" hidden></div>
   </section>
 
@@ -108,6 +111,7 @@
       <button type="button" class="table-toggle" data-table="tableShare" aria-expanded="false">Table</button>
     </div>
     <div class="chart" id="chartShare" role="img" aria-label="One hundred percent stacked area chart of chain market share over time"></div>
+    <p class="panel-meta" id="shareMeta"></p>
     <div class="table-wrap" id="tableShare" hidden></div>
   </section>
 
@@ -120,6 +124,7 @@
       <button type="button" class="table-toggle" data-table="tableIssuers" aria-expanded="false">Table</button>
     </div>
     <div class="chart" id="chartIssuers" role="img" aria-label="Stacked area chart of stablecoin supply by issuer over time"></div>
+    <p class="panel-meta" id="issuersMeta"></p>
     <div class="table-wrap" id="tableIssuers" hidden></div>
   </section>
 
@@ -145,7 +150,7 @@
       this measures exchanges settling with each other — not people sending money.
       Flows touching a global venue are never assigned to a corridor. Coverage
       excludes Tron, the largest retail USDT rail in most of these markets.
-      <a href="METHODOLOGY.md#corridor-proxy">Read the full method and its limits</a>.
+      <a href="https://github.com/byzfault/stablecoin-tracker/blob/main/METHODOLOGY.md#corridor-proxy">Read the full method and its limits</a>.
     </p>
 
     <p class="panel-meta" id="corridorMeta"></p>
