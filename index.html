@@ -123,6 +123,51 @@
     <div class="table-wrap" id="tableIssuers" hidden></div>
   </section>
 
+  <!-- ================= Corridor Signals (proxy) ==========================
+       A deliberately hedged section. Everything below is inferred from
+       exchange-to-exchange transfers, and the framing says so before the
+       numbers do rather than after. -->
+  <section class="card corridor" id="corridorSection" aria-labelledby="corridorTitle">
+    <div class="card-head">
+      <div>
+        <h2 id="corridorTitle">Corridor signals <span class="proxy-tag">proxy</span></h2>
+        <p class="card-sub">
+          Stablecoin volume between exchanges whose home markets differ, used as a
+          rough stand-in for cross-border flow. This is not remittance data.
+        </p>
+      </div>
+      <button type="button" class="table-toggle" data-table="corridorDetail" aria-expanded="false">Detail</button>
+    </div>
+
+    <p class="proxy-note" id="corridorProxyNote">
+      <strong>How this proxy works, and what it misses.</strong>
+      Both ends of every transfer must already be a labelled exchange address, so
+      this measures exchanges settling with each other — not people sending money.
+      Flows touching a global venue are never assigned to a corridor. Coverage
+      excludes Tron, the largest retail USDT rail in most of these markets.
+      <a href="METHODOLOGY.md#corridor-proxy">Read the full method and its limits</a>.
+    </p>
+
+    <p class="panel-meta" id="corridorMeta"></p>
+
+    <div class="corridor-body" id="corridorBody">
+      <p class="section-note">Loading…</p>
+    </div>
+
+    <div class="table-wrap" id="corridorDetail" hidden></div>
+
+    <div class="corridor-cost">
+      <h3 class="section-title">Cost of sending $200</h3>
+      <p class="section-sub" id="corridorCostSub">
+        Average cost of a traditional remittance to the destination country against an
+        assumed on-chain cost. The on-chain figure is a fee assumption, not a measurement,
+        and it excludes the on-ramp and off-ramp spreads where most of the real cost sits.
+      </p>
+      <div class="chart chart-cost" id="chartCost" role="img" aria-label="Grouped bar chart comparing traditional remittance cost with on-chain transfer cost per corridor"></div>
+      <p class="section-note" id="corridorCostNote"></p>
+    </div>
+  </section>
+
   <p class="load-error" id="loadError" hidden></p>
 
 </main>
@@ -132,8 +177,11 @@
     <p>
       Supply data from <a href="https://defillama.com/stablecoins">DefiLlama</a> via their
       <a href="https://stablecoins.llama.fi">free stablecoins API</a>. Monetary aggregates from
-      <a href="https://fred.stlouisfed.org/">FRED</a>, St. Louis Fed. This dashboard is not
-      affiliated with either.
+      <a href="https://fred.stlouisfed.org/">FRED</a>, St. Louis Fed. Corridor signals from
+      <a href="https://dune.com/">Dune</a> and a hand-curated venue map; remittance cost and
+      volume context from the <a href="https://www.worldbank.org/">World Bank</a> and
+      <a href="https://www.knomad.org/data/remittances">KNOMAD</a>. This dashboard is not
+      affiliated with any of them.
     </p>
   </div>
 </footer>

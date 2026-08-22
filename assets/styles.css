@@ -163,6 +163,15 @@ h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
 :root[data-theme="dark"] .status-strip,
 :root:not([data-theme="light"]) .status-strip:where(.dark-ok) { background: #2a2413; border-color: #4d431f; color: #d6bd7a; }
 
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .stale-badge {
+    color: #e0c477; background: #2a2413; border-color: #4d431f;
+  }
+}
+:root[data-theme="dark"] .stale-badge {
+  color: #e0c477; background: #2a2413; border-color: #4d431f;
+}
+
 .load-error {
   margin: 20px 0;
   padding: 14px;
@@ -260,6 +269,93 @@ thead th {
 .swatch {
   display: inline-block; width: 9px; height: 9px;
   border-radius: 2px; margin-right: 7px; vertical-align: baseline;
+}
+
+/* ---- corridor signals (proxy) ------------------------------------------
+
+   The proxy framing is styled to be read, not skimmed past. The note sits above
+   the numbers with a warning surface rather than below them in muted grey,
+   because a caveat placed after the figure it qualifies is a caveat nobody
+   reads. */
+
+.proxy-tag {
+  display: inline-block; vertical-align: 2px;
+  margin-left: 6px; padding: 2px 7px;
+  font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.proxy-note {
+  font-size: 0.8125rem; line-height: 1.55;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--series-4);
+  border-radius: var(--radius);
+  padding: 11px 14px; margin: 4px 0 12px;
+}
+.proxy-note strong { color: var(--text-primary); }
+.proxy-note a { color: var(--accent); }
+
+/* Panel provenance: source, cadence and the timestamp of the data itself. */
+.panel-meta {
+  font-size: 0.6875rem; color: var(--text-muted);
+  margin-bottom: 12px; line-height: 1.5;
+}
+.panel-meta a { color: var(--text-muted); text-decoration: underline; }
+
+.stale-badge {
+  display: inline-block; margin-left: 4px; padding: 1px 7px;
+  font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: #7a5b12; background: #fdf3d7; border: 1px solid #e8d49a;
+  border-radius: 999px; cursor: help;
+}
+
+.attribution-line {
+  font-size: 0.8125rem; line-height: 1.55;
+  color: var(--text-secondary); margin-bottom: 12px;
+}
+.attribution-line strong {
+  color: var(--text-primary); font-variant-numeric: tabular-nums;
+}
+
+/* An always-open table rather than a collapsed one: this panel has no chart of
+   its own, so the table is the panel. */
+.table-wrap.is-open { margin-top: 0; }
+.corridor-table th[scope="row"] { font-weight: 600; color: var(--text-primary); }
+.corridor-table .arrow { color: var(--text-muted); padding: 0 2px; }
+.corridor-table td.num { font-variant-numeric: tabular-nums; }
+.corridor-table td.muted { color: var(--text-muted); }
+.corridor-table .is-pos { color: var(--pos); }
+.corridor-table .is-neg { color: var(--neg); }
+.cell-note { color: var(--text-muted); font-size: 0.6875rem; font-weight: 400; }
+.pairs { white-space: normal; line-height: 1.6; text-align: left; min-width: 240px; }
+
+/* Confidence is the curated venue mapping's confidence, not the data's. It is
+   a word, not a colour alone — low confidence on a red dot in a dense table is
+   invisible to exactly the readers who most need to see it. */
+.confidence {
+  display: inline-block; padding: 1px 8px;
+  font-size: 0.6875rem; font-weight: 600;
+  border-radius: 999px; border: 1px solid var(--border-strong);
+  color: var(--text-secondary); background: var(--surface-2);
+}
+.confidence.is-low { color: var(--neg); border-color: color-mix(in srgb, var(--neg) 45%, transparent); }
+.confidence.is-medium { color: var(--text-secondary); }
+.confidence.is-high { color: var(--pos); border-color: color-mix(in srgb, var(--pos) 40%, transparent); }
+
+.corridor-cost { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.corridor-cost .section-sub { margin-bottom: 10px; }
+.chart-cost { height: 300px; }
+
+@media (max-width: 560px) {
+  .chart-cost { height: 260px; }
+  .corridor-table .cell-note { display: none; }
 }
 
 /* ---- footer ------------------------------------------------------------ */

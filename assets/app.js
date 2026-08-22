@@ -35,6 +35,13 @@
   var ALL = '__all__';
 
   var charts = [];
+
+  /* Kept out of `charts` on purpose. draw() disposes that whole array and
+   * rebuilds only the three supply charts, so a cost chart parked in there
+   * would be destroyed by the first filter change and never come back. The
+   * corridor panel does not respond to the filters at all — it owns its own
+   * chart's lifecycle. */
+  var costChart = null;
   var state = { rangeDays: 0, chain: ALL, issuer: ALL, data: null };
 
   // ---- helpers ----------------------------------------------------------
@@ -311,6 +318,244 @@
     if (messages.length) { strip.textContent = messages.join(' '); strip.hidden = false; }
   }
 
+  // ---- corridor signals (proxy) -----------------------------------------
+
+  /* Every panel that renders a snapshot prints where the number came from and
+   * how often it refreshes. A dashboard that shows a figure without a date is
+   * asking to be believed on trust it has not earned. */
+  function fmtStamp(iso) {
+    if (!iso) return 'unknown';
+    var d = new Date(iso);
+    if (isNaN(d)) return 'unknown';
+    return d.toLocaleDateString('en-GB', {
+      day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'
+    }) + ', ' + d.toLocaleTimeString('en-GB', {
+      hour: '2-digit', minute: '2-digit', timeZone: 'UTC'
+    }) + ' UTC';
+  }
+
+  function hoursSince(iso) {
+    var t = Date.parse(iso);
+    return isNaN(t) ? null : (Date.now() - t) / 3600000;
+  }
+
+  /* Stale is a property of the data, not of the fetch: a run that succeeds at
+   * 06:00 and serves a snapshot from three days ago is stale, and saying
+   * "updated this morning" about it would be the lie the badge exists to
+   * prevent. */
+  function renderPanelMeta(elId, opts) {
+    var el = document.getElementById(elId);
+    if (!el) return;
+    var age = hoursSince(opts.asOf);
+    var stale = opts.stale || (age !== null && age > opts.staleAfterHours);
+    var parts = ['Data as of <time datetime="' + escapeHtml(opts.asOf || '') + '">'
+                 + fmtStamp(opts.asOf) + '</time>'];
+    parts.push(opts.sourceUrl
+      ? '<a href="' + escapeHtml(opts.sourceUrl) + '">' + escapeHtml(opts.source) + '</a>'
+      : escapeHtml(opts.source));
+    parts.push('updated ' + escapeHtml(opts.cadence));
+    el.innerHTML = parts.join(' · ')
+      + (stale ? ' <span class="stale-badge" title="This panel is older than its refresh '
+                 + 'cadence. The last good snapshot is being shown.">stale</span>' : '');
+  }
+
+  function trendCell(pct) {
+    if (pct === null || pct === undefined) return '<td class="num muted">—</td>';
+    var cls = pct >= 0 ? 'is-pos' : 'is-neg';
+    return '<td class="num ' + cls + '">' + (pct >= 0 ? '+' : '') + pct.toFixed(0) + '%</td>';
+  }
+
+  /* Heat by share of the largest corridor, on a square root so the long tail
+   * stays visible. The value is always printed as text — colour is the second
+   * encoding, never the only one. */
+  function heatStyle(value, max) {
+    if (!max) return '';
+    var t = Math.sqrt(Math.max(value, 0) / max);
+    return ' style="background:color-mix(in srgb, var(--accent) '
+         + (t * 26).toFixed(1) + '%, transparent)"';
+  }
+
+  function renderCorridors(data) {
+    var body = document.getElementById('corridorBody');
+    var costSection = document.querySelector('.corridor-cost');
+
+    if (!data || !data.corridors || !data.corridors.length) {
+      body.innerHTML = '<p class="section-note">'
+        + 'No corridor data yet. Set <code>corridor.dune_query_id</code> in '
+        + '<code>config.json</code> and run <code>scripts/fetch_dune.py</code> with '
+        + '<code>DUNE_API_KEY</code> set, then <code>scripts/build_corridors.py</code>.'
+        + '</p>';
+      if (costSection) costSection.hidden = true;
+      document.getElementById('corridorMeta').textContent = '';
+      return;
+    }
+
+    renderPanelMeta('corridorMeta', {
+      asOf: data.data_as_of || data.fetched_at,
+      source: data.source_name || 'Dune Analytics',
+      sourceUrl: data.source_url,
+      cadence: data.update_cadence || 'daily',
+      stale: data.stale,
+      staleAfterHours: 48
+    });
+
+    var attribution = data.attribution || {};
+    var top = data.corridors.slice(0, 12);
+    var max = top.length ? top[0].proxy_volume_usd : 0;
+
+    var html = ''
+      + '<p class="attribution-line">'
+      +   '<strong>' + (attribution.corridor_share_pct || 0).toFixed(1) + '%</strong> of labelled '
+      +   'exchange-to-exchange volume in this window could be attributed to a market pair. '
+      +   '<strong>' + (attribution.unattributed_share_pct || 0).toFixed(1) + '%</strong> touched a '
+      +   'global venue or an unmapped one and is deliberately left out of every corridor below.'
+      + '</p>'
+      + '<div class="table-wrap is-open"><table class="corridor-table">'
+      + '<caption class="sr-only">Top market pairs by proxy volume over the last '
+      +   (data.window ? data.window.days : 90) + ' days</caption>'
+      + '<thead><tr>'
+      +   '<th scope="col">Corridor</th>'
+      +   '<th scope="col" class="num">Proxy volume</th>'
+      +   '<th scope="col" class="num">Transfers</th>'
+      +   '<th scope="col" class="num">30d trend</th>'
+      +   '<th scope="col" class="num">Traditional, annual</th>'
+      +   '<th scope="col">Mapping</th>'
+      + '</tr></thead><tbody>';
+
+    top.forEach(function (c) {
+      var traditional = c.traditional_annual_usd
+        ? usd(c.traditional_annual_usd) + ' <span class="cell-note">bilateral</span>'
+        : (c.traditional_received_total_usd
+            ? usd(c.traditional_received_total_usd)
+              + ' <span class="cell-note">all sources, ' + (c.traditional_received_year || '') + '</span>'
+            : '—');
+      html += '<tr>'
+        + '<th scope="row">' + escapeHtml(c.from_name) + ' <span class="arrow">→</span> '
+        +   escapeHtml(c.to_name) + '</th>'
+        + '<td class="num"' + heatStyle(c.proxy_volume_usd, max) + '>' + usd(c.proxy_volume_usd) + '</td>'
+        + '<td class="num">' + c.transfer_count.toLocaleString('en-US') + '</td>'
+        + trendCell(c.trend_30d_pct)
+        + '<td class="num">' + traditional + '</td>'
+        + '<td><span class="confidence is-' + escapeHtml(c.confidence) + '">'
+        +   escapeHtml(c.confidence) + '</span></td>'
+        + '</tr>';
+    });
+
+    body.innerHTML = html + '</tbody></table></div>';
+
+    renderCorridorDetail(data);
+    if (costSection) costSection.hidden = false;
+    renderCostChart();
+  }
+
+  /* The detail view exists so a corridor can be audited back to the venue pairs
+   * it was built from. A single mislabelled address is the most likely way this
+   * module goes wrong, and hiding the venues would make that invisible. */
+  function renderCorridorDetail(data) {
+    var el = document.getElementById('corridorDetail');
+    if (!el) return;
+    var html = '<table><caption class="sr-only">Venue pairs behind each corridor</caption>'
+      + '<thead><tr><th scope="col">Corridor</th><th scope="col">Venue pairs</th>'
+      + '<th scope="col" class="num">USDT</th><th scope="col" class="num">USDC</th>'
+      + '<th scope="col" class="num">Remittance cost</th></tr></thead><tbody>';
+
+    data.corridors.slice(0, 12).forEach(function (c) {
+      var pairs = (c.venue_pairs || []).slice(0, 4).map(function (p) {
+        return escapeHtml(p.pair) + ' (' + usd(p.usd_volume) + ')';
+      }).join('<br>') || '—';
+      var cost = c.remittance_cost_pct === null || c.remittance_cost_pct === undefined
+        ? '—'
+        : c.remittance_cost_pct.toFixed(2) + '% <span class="cell-note">'
+          + (c.remittance_cost_source === 'corridor'
+              ? 'corridor, ' + escapeHtml(c.remittance_cost_period || '')
+              : 'country average, ' + (c.remittance_cost_year || '')) + '</span>';
+      html += '<tr><th scope="row">' + escapeHtml(c.from_market) + ' → ' + escapeHtml(c.to_market)
+        + '</th><td class="pairs">' + pairs + '</td>'
+        + '<td class="num">' + usd((c.tokens || {}).USDT || 0) + '</td>'
+        + '<td class="num">' + usd((c.tokens || {}).USDC || 0) + '</td>'
+        + '<td class="num">' + cost + '</td></tr>';
+    });
+    el.innerHTML = html + '</tbody></table>';
+  }
+
+  /* Two bars per corridor rather than a ratio: a "12x cheaper" headline would
+   * be the most quotable thing on the page and the least defensible, since the
+   * on-chain side is an assumed fee and the traditional side is a measured
+   * all-in price including cash handling and FX. */
+  function renderCostChart() {
+    var el = document.getElementById('chartCost');
+    var data = state.data && state.data.corridors;
+    if (!el || !data || !data.corridors) return;
+    var withCost = data.corridors.slice(0, 12).filter(function (c) {
+      return c.remittance_cost_pct !== null && c.remittance_cost_pct !== undefined;
+    }).slice(0, 8);
+
+    var note = document.getElementById('corridorCostNote');
+    if (!withCost.length) {
+      el.innerHTML = '';
+      if (note) note.textContent = 'No remittance cost figures published for these destinations.';
+      return;
+    }
+
+    var labels = withCost.map(function (c) { return c.from_market + ' → ' + c.to_market; });
+    // Colours are read from CSS variables at build time, so a theme change
+    // means rebuilding rather than restyling.
+    if (costChart) costChart.dispose();
+    costChart = echarts.init(el, null, { renderer: 'canvas' });
+    var muted = cssVar('--text-muted');
+
+    costChart.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        backgroundColor: cssVar('--surface-1'),
+        borderColor: cssVar('--border-strong'),
+        borderWidth: 1,
+        textStyle: { color: cssVar('--text-primary'), fontSize: 12 },
+        valueFormatter: function (v) { return v.toFixed(2) + '%'; },
+        extraCssText: 'box-shadow:0 4px 16px rgb(0 0 0 / 0.12); border-radius:8px;'
+      },
+      legend: {
+        bottom: 0, icon: 'roundRect', itemWidth: 10, itemHeight: 10, itemGap: 14,
+        textStyle: { color: cssVar('--text-secondary'), fontSize: 12 }
+      },
+      grid: { left: 8, right: 24, top: 8, bottom: 40, containLabel: true },
+      xAxis: {
+        type: 'value',
+        axisLabel: { color: muted, fontSize: 11, formatter: function (v) { return v + '%'; } },
+        splitLine: { lineStyle: { color: cssVar('--grid') } }
+      },
+      yAxis: {
+        type: 'category',
+        data: labels.slice().reverse(),
+        axisLine: { lineStyle: { color: cssVar('--grid') } },
+        axisTick: { show: false },
+        axisLabel: { color: cssVar('--text-secondary'), fontSize: 11 }
+      },
+      series: [
+        {
+          name: 'Traditional remittance',
+          type: 'bar',
+          itemStyle: { color: cssVar('--series-2') },
+          barMaxWidth: 14,
+          data: withCost.map(function (c) { return +c.remittance_cost_pct.toFixed(2); }).reverse()
+        },
+        {
+          name: 'On-chain (assumed fees)',
+          type: 'bar',
+          itemStyle: { color: cssVar('--series-1') },
+          barMaxWidth: 14,
+          data: withCost.map(function (c) { return c.onchain_cost_pct || 0; }).reverse()
+        }
+      ],
+      animationDuration: 350
+    }, true);
+
+    if (note) {
+      note.textContent = (data.cost_assumptions || {}).note || '';
+    }
+  }
+
   // ---- filters and drawing ----------------------------------------------
 
   function buildFilters() {
@@ -424,6 +669,7 @@
               && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
         renderScale();
+        renderCostChart();
         draw();
       });
     }
@@ -431,7 +677,11 @@
     // With no manual control, follow the OS setting live.
     var media = window.matchMedia('(prefers-color-scheme: dark)');
     var onSchemeChange = function () {
-      if (!document.documentElement.hasAttribute('data-theme')) { renderScale(); draw(); }
+      if (!document.documentElement.hasAttribute('data-theme')) {
+        renderScale();
+        renderCostChart();
+        draw();
+      }
     };
     if (media.addEventListener) media.addEventListener('change', onSchemeChange);
 
@@ -440,6 +690,7 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         charts.forEach(function (c) { c.resize(); });
+        if (costChart) costChart.resize();
       }, 120);
     });
   }
@@ -454,13 +705,23 @@
         });
       }));
 
+      /* Corridors load separately and are allowed to be absent. The module is
+       * optional — it needs a Dune key the repo cannot carry — and a dashboard
+       * that refuses to render its supply charts because an optional proxy panel
+       * has no data would be trading a working page for a missing one. */
+      var corridors = await fetch('data/corridors.json')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; });
+
       state.data = {
-        summary: loaded[0], matrix: loaded[1], reference: loaded[2], meta: loaded[3]
+        summary: loaded[0], matrix: loaded[1], reference: loaded[2], meta: loaded[3],
+        corridors: corridors
       };
 
       renderHeadline();
       renderScale();
       renderStatus(state.data.meta);
+      renderCorridors(corridors);
       buildFilters();
       bindControls();
       draw();
