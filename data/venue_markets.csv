@@ -2,22 +2,70 @@ venue,home_market,region,confidence
 Bitso,MEX,LAC,high
 Mercado Bitcoin,BRA,LAC,high
 Ripio,ARG,LAC,medium
-Buenbit,ARG,LAC,medium
-Bitso Colombia,COL,LAC,low
-VALR,ZAF,SSA,high
+Lemon Cash,ARG,LAC,high
+Panda Exchange,COL,LAC,low
 Luno,ZAF,SSA,medium
-Yellow Card,NGA,SSA,low
+AltCoinTrader,ZAF,SSA,high
 Coins.ph,PHL,EAP,high
 Bitkub,THA,EAP,high
+Zipmex,THA,EAP,low
 Indodax,IDN,EAP,high
+Tokocrypto,IDN,EAP,high
+Upbit Indonesia,IDN,EAP,high
 Upbit,KOR,EAP,high
+Bithumb,KOR,EAP,high
+Korbit,KOR,EAP,high
+Coinone,KOR,EAP,high
+GOPAX,KOR,EAP,high
+bitFlyer,JPN,EAP,high
+GMO Coin,JPN,EAP,high
+Bitbank,JPN,EAP,high
+Coincheck,JPN,EAP,high
+BitoPro,TWN,EAP,high
+MAX Exchange,TWN,EAP,high
+Coinhako,SGP,EAP,medium
+Tokenize Xchange,SGP,EAP,medium
+CoinSpot,AUS,EAP,high
+BTC Markets,AUS,EAP,high
+Coinjar,AUS,EAP,medium
 CoinDCX,IND,SAR,high
+WazirX,IND,SAR,medium
+CoinSwitch,IND,SAR,high
+Delta Exchange,IND,SAR,medium
 BtcTurk,TUR,ECA,high
 Paribu,TUR,ECA,high
-Rain,BHR,MEA,medium
-BitOasis,ARE,MEA,medium
+Bitci,TUR,ECA,high
+Bitvavo,NLD,ECA,high
+Bitpanda,AUT,ECA,high
+Bitcoin Suisse,CHE,ECA,high
+SwissBorg,CHE,ECA,medium
+Zonda,POL,ECA,high
+Kuna,UKR,ECA,high
+QMall,UKR,ECA,medium
+Firi,NOR,ECA,high
+Norwegian Block Exchange,NOR,ECA,high
+Cryptal,GEO,ECA,medium
+Nobitex,IRN,MEA,high
+Emirex,ARE,MEA,medium
+Coinsquare,CAN,NAC,high
+Shakepay,CAN,NAC,high
+Netcoins,CAN,NAC,high
+NDAX,CAN,NAC,high
+Wealthsimple,CAN,NAC,high
+Gemini,USA,NAC,high
+Robinhood,USA,NAC,high
+Binance US,USA,NAC,high
 Binance,GLOBAL,GLOBAL,high
 OKX,GLOBAL,GLOBAL,high
 Bybit,GLOBAL,GLOBAL,high
 Coinbase,GLOBAL,GLOBAL,high
+Coinbase Prime,GLOBAL,GLOBAL,high
 Kraken,GLOBAL,GLOBAL,high
+HTX,GLOBAL,GLOBAL,high
+KuCoin,GLOBAL,GLOBAL,high
+MEXC,GLOBAL,GLOBAL,high
+Gate.io,GLOBAL,GLOBAL,high
+Bitfinex,GLOBAL,GLOBAL,high
+Crypto.com,GLOBAL,GLOBAL,high
+Bitstamp,GLOBAL,GLOBAL,high
+Bitget,GLOBAL,GLOBAL,high

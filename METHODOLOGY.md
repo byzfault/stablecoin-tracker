@@ -47,6 +47,16 @@ market-pair flow by looking up both ends. The mapping is hand-curated, it is the
 weakest link in the module, and it is committed as data so it can be argued
 with.
 
+Every venue name in it has been checked against Dune's published label seed
+(`cex_evms_addresses` in duneanalytics/spellbook) and has at least two labelled
+EVM addresses behind it. This matters more than it sounds: a venue name that
+does not match a Dune label exactly matches nothing at all, and a row that never
+matches is indistinguishable from a market with no flow. Several obvious
+candidates — VALR, Yellow Card, Rain, BitOasis, Buenbit — are absent from the
+map for exactly this reason. They have no labelled addresses, so including them
+would have implied coverage of South Africa, pan-African and Gulf flow that does
+not exist.
+
 Three rules constrain it:
 
 * A flow touching a venue whose home market is `GLOBAL`, or a venue absent from
@@ -55,9 +65,9 @@ Three rules constrain it:
   than inventing them.
 * Two venues in the same market are **domestic**, not a corridor.
 * A corridor inherits the **confidence of its weakest venue mapping**, shown in
-  the table. `low` means the home-market claim itself is shaky — Yellow Card
-  operates across roughly twenty African countries, and pinning it to Nigeria is
-  a simplification, not a fact.
+  the table. `low` means the home-market claim itself is shaky — Panda Exchange
+  operates across several Latin American countries, and pinning it to Colombia
+  is a simplification, not a fact.
 
 The panel leads with the share of labelled volume that survived these rules.
 On real data that share is small. That is the honest result, not a defect to be
@@ -86,7 +96,9 @@ The proxy misses more than it catches, and in a biased direction:
   Solana. Tron is the largest retail USDT rail in most of the markets this panel
   cares about, so every regional total is a floor.
 * **Labels are community-maintained.** Global venues are labelled thoroughly;
-  regional venues patchily or not at all. A venue with no labels is
+  regional venues patchily or not at all. Two of the regions this panel most
+  wants to describe are the worst served: sub-Saharan Africa has one labelled
+  venue beyond Luno, and the Gulf has one. A venue with no labels is
   indistinguishable from a venue with no flow. The build writes out the venues
   it saw but could not map, and the mapped venues it never saw, so the gap stays
   visible.
