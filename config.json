@@ -12,5 +12,9 @@
       "venue_withdrawal_fee_usd": 1.0,
       "note": "Assumption, not a measurement. A blended stablecoin transfer fee plus a typical exchange withdrawal fee on the reference $200 send. It excludes the on-ramp and off-ramp spreads, which is where most of the real cost of this route sits, so treat it as a floor."
     }
+  },
+  "worldbank": {
+    "knomad_matrix_url": null,
+    "refetch_interval_days": 30
   }
 }

@@ -104,6 +104,39 @@ def load_venue_map(path: Path) -> dict[str, dict[str, str]]:
     return venues
 
 
+def load_rpw_corridors(path: Path) -> dict[str, dict[str, Any]]:
+    """Read an optional hand-exported RPW corridor file, keyed "SEND-RECV".
+
+    Remittance Prices Worldwide publishes true corridor costs but blocks
+    automated download, so this is the manual escape hatch: export the corridors
+    you care about to ``data/rpw_corridors.csv`` with columns
+    ``from_market,to_market,cost_pct,period`` and they take precedence over the
+    country averages from WDI.
+    """
+    corridors: dict[str, dict[str, Any]] = {}
+    try:
+        with path.open(encoding="utf-8-sig", newline="") as handle:
+            for row in csv.DictReader(handle):
+                src = (row.get("from_market") or "").strip().upper()
+                dst = (row.get("to_market") or "").strip().upper()
+                try:
+                    cost = float(row.get("cost_pct") or "")
+                except ValueError:
+                    continue
+                if len(src) == 3 and len(dst) == 3:
+                    corridors[f"{src}-{dst}"] = {
+                        "value": round(cost, 3),
+                        "period": (row.get("period") or "").strip(),
+                    }
+    except FileNotFoundError:
+        return {}
+    except (OSError, csv.Error) as exc:
+        logger.warning("Ignoring unreadable %s (%s)", path.name, exc)
+        return {}
+    logger.info("Loaded %d corridor-level RPW cost(s)", len(corridors))
+    return corridors
+
+
 def weakest(*confidences: str) -> str:
     """The lowest confidence among the inputs."""
     return min(confidences, key=lambda c: CONFIDENCE_ORDER.index(c) if c in CONFIDENCE_ORDER else 0)
@@ -113,6 +146,7 @@ def build(
     flows: dict[str, Any],
     venue_map: dict[str, dict[str, str]],
     costs: dict[str, Any] | None,
+    rpw_corridors: dict[str, dict[str, Any]],
     knomad: dict[str, Any] | None,
     countries: dict[str, Any] | None,
     cost_config: dict[str, Any],
@@ -216,8 +250,17 @@ def build(
         trend = round((recent - previous) / previous * 100, 1) if previous > 0 else None
 
         to_market = corridor["to_market"]
-        cost = cost_by_country.get(to_market)
         pair_key = f"{corridor['from_market']}-{to_market}"
+        # A real corridor figure beats a country average whenever one exists.
+        corridor_cost = rpw_corridors.get(pair_key)
+        cost = corridor_cost or cost_by_country.get(to_market)
+        cost_source = "corridor" if corridor_cost else "country_average"
+        # The WDI series carry their observation year alongside the value, since
+        # both are two or three years behind and the dashboard has to print the
+        # year rather than imply the figure is current.
+        received = knomad_totals.get(to_market)
+        received_value = received.get("value") if isinstance(received, dict) else received
+        received_year = received.get("year") if isinstance(received, dict) else None
 
         output_corridors.append(
             {
@@ -241,9 +284,12 @@ def build(
                 ],
                 "remittance_cost_pct": cost.get("value") if isinstance(cost, dict) else None,
                 "remittance_cost_year": cost.get("year") if isinstance(cost, dict) else None,
+                "remittance_cost_period": cost.get("period") if isinstance(cost, dict) else None,
+                "remittance_cost_source": cost_source if cost else None,
                 "onchain_cost_pct": onchain_cost_pct(cost_config),
                 "traditional_annual_usd": knomad_pairs.get(pair_key),
-                "traditional_received_total_usd": knomad_totals.get(to_market),
+                "traditional_received_total_usd": received_value,
+                "traditional_received_year": received_year,
             }
         )
 
@@ -358,6 +404,7 @@ def main() -> int:
             flows,
             venue_map,
             load_json(out_dir / "remittance_costs.json"),
+            load_rpw_corridors(out_dir / "rpw_corridors.csv"),
             load_json(out_dir / "knomad_matrix.json"),
             load_json(out_dir / "countries.json"),
             cost_config,
