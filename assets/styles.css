@@ -31,6 +31,16 @@
   --series-1: #2a78d6;  /* Ethereum */
   --series-2: #eb6834;  /* Tron     */
   --series-3: #1baf7a;  /* Solana   */
+
+  /* Flow direction. Not --pos/--neg: money leaving a market is not a bad
+   * outcome, it is a direction, and red would editorialise. Green and orange
+   * differ in hue and lightness, so the pair survives colourblind vision. */
+  --flow-in: #1baf7a;
+  --flow-out: #eb6834;
+  /* The map's land needs its own tokens. --surface-2 sits almost on top of the
+   * card background, which left every continent invisible. */
+  --map-land: #e4e4df;
+  --map-border: #cdcdc6;
   --series-4: #eda100;  /* BSC      */
   --series-5: #e87ba4;  /* Base     */
   --series-6: #008300;  /* Arbitrum */
@@ -67,6 +77,10 @@
     --series-1: #3987e5;
     --series-2: #d95926;
     --series-3: #199e70;
+    --flow-in: #199e70;
+    --flow-out: #d95926;
+    --map-land: #302f2d;
+    --map-border: #454440;
     --series-4: #c98500;
     --series-5: #d55181;
     --series-6: #008300;
@@ -101,6 +115,10 @@
   --series-1: #3987e5;
   --series-2: #d95926;
   --series-3: #199e70;
+  --flow-in: #199e70;
+  --flow-out: #d95926;
+  --map-land: #302f2d;
+  --map-border: #454440;
   --series-4: #c98500;
   --series-5: #d55181;
   --series-6: #008300;
@@ -510,4 +528,45 @@ thead th {
 @media (max-width: 560px) {
   .stats-table .stat-context { display: none; }
   .control, .select { width: 100%; }
+}
+
+/* ---- flow map (hero) ---------------------------------------------------- */
+
+/* Tall enough that the arcs have room to curve without crossing the bubbles,
+ * and capped by viewport height so the panel below stays visible on a laptop —
+ * a hero that fills the fold entirely reads as the whole page. */
+.flowmap-chart {
+  width: 100%;
+  /* Sized to the world's aspect ratio at the container's width. Taller than
+   * this and echarts, which preserves the projection's proportions, just adds
+   * empty bands above and below the continents. */
+  height: clamp(300px, 44vh, 470px);
+}
+.flowmap-chart.is-empty { height: 0; }
+
+.flowmap-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 18px;
+  margin-top: 6px; font-size: 0.6875rem; color: var(--text-secondary);
+}
+.legend-key { display: inline-flex; align-items: center; gap: 6px; }
+.legend-key i {
+  width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+}
+/* The hub's key mirrors its mark on the map: an outline, not a fill, because it
+ * is not a place with volume of its own. */
+.legend-key .key-ring {
+  background: transparent;
+  border: 1.5px dashed var(--text-muted);
+}
+
+.tip-dim { color: var(--text-muted); font-size: 0.6875rem; }
+
+@media (max-width: 620px) {
+  .flowmap-chart { height: clamp(260px, 44vh, 380px); }
+}
+
+/* The map is decoration without the table behind it. Print takes the numbers. */
+@media print {
+  .flowmap-chart { display: none; }
+  #flowMapTable { display: block !important; }
 }

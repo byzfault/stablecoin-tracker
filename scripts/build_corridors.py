@@ -175,6 +175,27 @@ def build(
         "one_end_regional": {"usd_volume": 0.0, "transfer_count": 0},
         "unmapped_end": {"usd_volume": 0.0, "transfer_count": 0},
     }
+    # Hub legs, gathered per market. These are the flows with a real home market
+    # at exactly one end, and they are what the map draws. They are emphatically
+    # not corridors: the far end is a global venue that nets across every
+    # customer it has, so the counterparty is a hub rather than a destination.
+    #
+    # Direction is worth keeping separate rather than netted away. A market
+    # taking delivery from hubs and a market shipping to them are opposite
+    # behaviours that a single signed total would blur into one another.
+    legs: dict[str, dict[str, Any]] = {}
+
+    def leg(market: str, region: str) -> dict[str, Any]:
+        return legs.setdefault(market, {
+            "market": market,
+            "region": region,
+            "inbound_usd": 0.0,
+            "outbound_usd": 0.0,
+            "transfer_count": 0,
+            "counterparties": defaultdict(float),
+            "local_venues": defaultdict(float),
+            "confidence": "high",
+        })
     domestic = {"usd_volume": 0.0, "transfer_count": 0}
     seen_venues: dict[str, float] = defaultdict(float)
     unmapped_venues: dict[str, float] = defaultdict(float)
@@ -222,6 +243,25 @@ def build(
                 reason = "one_end_regional"
             blocked[reason]["usd_volume"] += usd
             blocked[reason]["transfer_count"] += count
+
+            if reason == "one_end_regional":
+                # Exactly one end has a home market. Whether it is the sender or
+                # the receiver is the direction of the leg.
+                if src["home_market"] == "GLOBAL":
+                    local, hub = dst, src
+                    local_name, hub_name = row["to_venue"], row["from_venue"]
+                    direction = "inbound_usd"
+                else:
+                    local, hub = src, dst
+                    local_name, hub_name = row["from_venue"], row["to_venue"]
+                    direction = "outbound_usd"
+
+                entry = leg(local["home_market"], local["region"])
+                entry[direction] += usd
+                entry["transfer_count"] += count
+                entry["counterparties"][hub_name] += usd
+                entry["local_venues"][local_name] += usd
+                entry["confidence"] = weakest(entry["confidence"], local["confidence"])
             continue
 
         if src["home_market"] == dst["home_market"]:
@@ -329,6 +369,33 @@ def build(
         "window": {"start": days[0], "end": days[-1], "days": len(days)},
         "trend_window_days": TREND_WINDOW_DAYS,
         "corridors": output_corridors,
+        # What the map draws. Sorted by gross volume so the biggest markets are
+        # first regardless of which way their net points.
+        "market_legs": sorted(
+            (
+                {
+                    "market": v["market"],
+                    "name": country_names.get(v["market"], v["market"]),
+                    "region": v["region"],
+                    "inbound_usd": round(v["inbound_usd"], 2),
+                    "outbound_usd": round(v["outbound_usd"], 2),
+                    "net_usd": round(v["inbound_usd"] - v["outbound_usd"], 2),
+                    "total_usd": round(v["inbound_usd"] + v["outbound_usd"], 2),
+                    "transfer_count": v["transfer_count"],
+                    "confidence": v["confidence"],
+                    "counterparties": [
+                        {"venue": n, "usd_volume": round(x, 2)}
+                        for n, x in sorted(v["counterparties"].items(), key=lambda kv: -kv[1])[:5]
+                    ],
+                    "local_venues": [
+                        {"venue": n, "usd_volume": round(x, 2)}
+                        for n, x in sorted(v["local_venues"].items(), key=lambda kv: -kv[1])[:5]
+                    ],
+                }
+                for v in legs.values()
+            ),
+            key=lambda m: -m["total_usd"],
+        ),
         "attribution": {
             "total_labelled_usd": round(total_volume, 2),
             "corridor_usd": round(attributed, 2),

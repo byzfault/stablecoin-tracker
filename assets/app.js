@@ -529,6 +529,248 @@
     body.innerHTML = html;
   }
 
+  /* ---- flow map ---------------------------------------------------------
+   *
+   * The hero. It draws the 4.8% of labelled volume that has a real home market
+   * at exactly one end, as bubbles on those markets with arcs running out to a
+   * hub.
+   *
+   * The hub is the hard part of the design. Binance is not anywhere: it nets
+   * across every customer it has, so a transfer arriving there has no onward
+   * destination that this data can name. Drawing it as a country, or omitting
+   * the arcs and letting bubbles imply self-contained national flows, would
+   * both assert something false. So it is drawn as a labelled ring parked over
+   * open ocean — visually part of the diagram, obviously not part of the
+   * geography, and captioned as such. The arcs stopping there IS the finding.
+   */
+  /* Mid-Atlantic, and north enough that the caption below the ring lands on
+   * open water rather than on Brazil's bubble. No landmass anywhere near it, so
+   * no country can be read into the position. */
+  var HUB_COORD = [-38, 30];
+  var flowMapChart = null;
+  var worldRegistered = false;
+
+  function mapPalette() {
+    return {
+      land: cssVar('--map-land') || '#e4e4df',
+      border: cssVar('--map-border') || '#cdcdc6',
+      inbound: cssVar('--flow-in') || '#1baf7a',
+      outbound: cssVar('--flow-out') || '#eb6834',
+      hub: cssVar('--text-secondary') || '#5c5b57',
+      text: cssVar('--text-primary') || '#1b1f24'
+    };
+  }
+
+  /* Bubble area, not radius, tracks volume — a radius-linear scale exaggerates
+   * the big markets by the square. Square root on a floor of 8px so the $0.02M
+   * markets stay clickable rather than vanishing. */
+  function bubbleSize(value, max) {
+    if (!max || value <= 0) return 8;
+    return 8 + Math.sqrt(value / max) * 34;
+  }
+
+  function renderFlowMap(data, world, centroids) {
+    var host = document.getElementById('flowMapChart');
+    if (!host) return;
+    var legs = (data && data.market_legs) || [];
+
+    if (!legs.length || !world || !centroids) {
+      host.innerHTML = '';
+      host.classList.add('is-empty');
+      document.getElementById('flowMapNote').textContent = legs.length
+        ? 'Map basemap unavailable in this refresh; the table below carries the same figures.'
+        : 'No market-level flow in this window.';
+      renderFlowMapTable(data);
+      return;
+    }
+    host.classList.remove('is-empty');
+
+    if (!worldRegistered) {
+      echarts.registerMap('world', world);
+      worldRegistered = true;
+    }
+
+    var pal = mapPalette();
+    var max = legs.reduce(function (t, m) { return Math.max(t, m.total_usd); }, 0);
+
+    var points = [];
+    var arcs = [];
+    legs.forEach(function (m) {
+      var c = centroids[m.market];
+      if (!c) return;
+      var net = m.net_usd;
+      points.push({
+        name: m.name,
+        value: c.concat(m.total_usd),
+        market: m.market,
+        leg: m,
+        symbolSize: bubbleSize(m.total_usd, max),
+        itemStyle: { color: net >= 0 ? pal.inbound : pal.outbound }
+      });
+      /* Arc direction follows the money: inbound markets get an arc pointing at
+       * them, outbound markets an arc pointing away. */
+      arcs.push({
+        coords: net >= 0 ? [HUB_COORD, c] : [c, HUB_COORD],
+        lineStyle: { color: net >= 0 ? pal.inbound : pal.outbound },
+        value: Math.abs(net)
+      });
+    });
+
+    var maxNet = arcs.reduce(function (t, a) { return Math.max(t, a.value); }, 0) || 1;
+
+    flowMapChart = echarts.init(host, null, { renderer: 'canvas' });
+    flowMapChart.setOption({
+      backgroundColor: 'transparent',
+      geo: {
+        map: 'world',
+        roam: false,
+        silent: true,
+        // Antarctica is a third of the height and carries no data here.
+        boundingCoords: [[-180, 82], [180, -58]],
+        top: '2%',
+        bottom: '2%',
+        zoom: 1.12,
+        itemStyle: { areaColor: pal.land, borderColor: pal.border, borderWidth: 0.5 },
+        emphasis: { disabled: true }
+      },
+      tooltip: {
+        trigger: 'item',
+        confine: true,
+        formatter: function (p) {
+          var m = p.data && p.data.leg;
+          if (!m) return '';
+          var cps = (m.counterparties || []).slice(0, 3).map(function (c) {
+            return escapeHtml(c.venue) + ' ' + usd(c.usd_volume);
+          }).join('<br>');
+          var lv = (m.local_venues || []).map(function (c) {
+            return escapeHtml(c.venue);
+          }).join(', ');
+          return '<strong>' + escapeHtml(m.name) + '</strong><br>'
+            + 'In from hubs: ' + usd(m.inbound_usd) + '<br>'
+            + 'Out to hubs: ' + usd(m.outbound_usd) + '<br>'
+            + 'Net: ' + (m.net_usd >= 0 ? '+' : '−') + usd(Math.abs(m.net_usd)) + '<br>'
+            + '<span class="tip-dim">Local venues: ' + lv + '</span><br>'
+            + '<span class="tip-dim">Hub counterparties:</span><br>' + cps;
+        }
+      },
+      series: [
+        {
+          type: 'lines',
+          coordinateSystem: 'geo',
+          silent: true,
+          polyline: false,
+          lineStyle: {
+            width: 1,
+            opacity: 0.28,
+            curveness: 0.28,
+            type: 'dashed'
+          },
+          effect: {
+            show: true, period: 5, trailLength: 0.5,
+            symbol: 'circle', symbolSize: 2, color: pal.hub
+          },
+          data: arcs.map(function (a) {
+            return {
+              coords: a.coords,
+              lineStyle: {
+                color: a.lineStyle.color,
+                width: 0.6 + Math.sqrt(a.value / maxNet) * 2.4
+              }
+            };
+          })
+        },
+        {
+          type: 'scatter',
+          coordinateSystem: 'geo',
+          data: points,
+          encode: { tooltip: 2 },
+          emphasis: { scale: 1.15 },
+          z: 5
+        },
+        /* The hub. A dashed ring rather than a filled dot, so it does not read
+         * as another market, plus a caption saying outright that it is not a
+         * place. */
+        {
+          type: 'scatter',
+          coordinateSystem: 'geo',
+          silent: true,
+          symbol: 'circle',
+          symbolSize: 58,
+          data: [{ value: HUB_COORD.concat(0) }],
+          itemStyle: {
+            color: 'transparent',
+            borderColor: pal.hub,
+            borderWidth: 1.5,
+            borderType: 'dashed'
+          },
+          label: {
+            show: true,
+            formatter: 'GLOBAL VENUES\nno location',
+            position: 'bottom',
+            distance: 8,
+            fontSize: 10,
+            fontWeight: 700,
+            lineHeight: 13,
+            align: 'center',
+            color: pal.hub
+          },
+          z: 4
+        }
+      ]
+    });
+
+    /* Deliberately NOT pushed into `charts`. draw() disposes that array whole
+     * and rebuilds only the three supply charts, so the map would be destroyed
+     * by the first filter change and never come back — the same trap the cost
+     * chart is kept out of. The map does not respond to the filters anyway. */
+
+    var inb = legs.filter(function (m) { return m.net_usd >= 0; }).length;
+    document.getElementById('flowMapLegend').innerHTML =
+        '<span class="legend-key"><i style="background:' + pal.inbound + '"></i>'
+      + 'Net inbound from hubs (' + inb + ')</span>'
+      + '<span class="legend-key"><i style="background:' + pal.outbound + '"></i>'
+      + 'Net outbound to hubs (' + (legs.length - inb) + ')</span>'
+      + '<span class="legend-key"><i class="key-ring"></i>Global venues — not a location</span>';
+
+    document.getElementById('flowMapNote').innerHTML =
+        'Bubble area is gross volume; colour is net direction. Arcs end at the hub '
+      + 'because that is where this data ends: a global venue nets across every '
+      + 'customer it has, so the onward destination is not recoverable. '
+      + '<strong>These are not corridors.</strong> '
+      + '<a href="https://github.com/byzfault/stablecoin-tracker/blob/main/METHODOLOGY.md#corridor-proxy">Method and limits</a>.';
+
+    renderFlowMapTable(data);
+  }
+
+  /* The map's accessible twin, and the thing to read if you want numbers rather
+   * than a shape. */
+  function renderFlowMapTable(data) {
+    var host = document.getElementById('flowMapTable');
+    if (!host) return;
+    var legs = (data && data.market_legs) || [];
+    if (!legs.length) { host.innerHTML = ''; return; }
+
+    var html = '<table class="corridor-table"><caption class="sr-only">'
+      + 'Stablecoin exchange settlement by market</caption><thead><tr>'
+      + '<th scope="col">Market</th><th scope="col" class="num">In from hubs</th>'
+      + '<th scope="col" class="num">Out to hubs</th><th scope="col" class="num">Net</th>'
+      + '<th scope="col">Local venues</th><th scope="col">Mapping</th></tr></thead><tbody>';
+    legs.forEach(function (m) {
+      var net = m.net_usd;
+      html += '<tr><th scope="row">' + escapeHtml(m.name) + '</th>'
+        + '<td class="num">' + usd(m.inbound_usd) + '</td>'
+        + '<td class="num">' + usd(m.outbound_usd) + '</td>'
+        + '<td class="num ' + (net >= 0 ? 'is-pos' : 'is-neg') + '">'
+        +   (net >= 0 ? '+' : '−') + usd(Math.abs(net)) + '</td>'
+        + '<td class="cell-note">'
+        +   (m.local_venues || []).map(function (v) { return escapeHtml(v.venue); }).join(', ')
+        + '</td>'
+        + '<td><span class="confidence is-' + escapeHtml(m.confidence) + '">'
+        +   escapeHtml(m.confidence) + '</span></td></tr>';
+    });
+    host.innerHTML = html + '</tbody></table>';
+  }
+
   function renderCorridors(data) {
     var body = document.getElementById('corridorBody');
     var costSection = document.querySelector('.corridor-cost');
@@ -871,6 +1113,11 @@
       if (!document.documentElement.hasAttribute('data-theme')) {
         renderScale();
         renderCostChart();
+        /* The map reads its palette from CSS custom properties at build time,
+         * so a scheme flip needs a full rebuild rather than a resize. Disposed
+         * first because echarts refuses to init twice on one container. */
+        if (flowMapChart) { flowMapChart.dispose(); flowMapChart = null; }
+        renderFlowMap(state.data.corridors, state.world, state.centroids);
         draw();
       }
     };
@@ -882,6 +1129,7 @@
       resizeTimer = setTimeout(function () {
         charts.forEach(function (c) { c.resize(); });
         if (costChart) costChart.resize();
+        if (flowMapChart) flowMapChart.resize();
       }, 120);
     });
   }
@@ -1052,14 +1300,27 @@
         .then(function (r) { return r.ok ? r.json() : null; })
         .catch(function () { return null; });
 
+      /* Basemap and centroids are optional in the same way corridors are. If
+       * either is missing the map degrades to its table, which carries every
+       * number the map encodes — so a failed geometry fetch costs presentation,
+       * never information. */
+      var geo = await Promise.all([
+        fetch('data/world_110m.geo.json').then(function (r) { return r.ok ? r.json() : null; }),
+        fetch('data/market_centroids.json').then(function (r) { return r.ok ? r.json() : null; })
+      ]).catch(function () { return [null, null]; });
+
       state.data = {
         summary: loaded[0], matrix: loaded[1], reference: loaded[2], meta: loaded[3],
         corridors: corridors
       };
 
+      state.world = geo[0];
+      state.centroids = geo[1];
+
       renderHeadline();
       renderScale();
       renderStatus(state.data.meta);
+      renderFlowMap(corridors, geo[0], geo[1]);
       renderCorridors(corridors);
       buildFilters();
       bindControls();

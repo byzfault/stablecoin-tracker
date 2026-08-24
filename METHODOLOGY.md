@@ -188,6 +188,33 @@ data. Not "hard to see" — structurally absent, because the settlement topology
 a hub and spoke, and a corridor would require a spoke-to-spoke edge that does not
 exist in any volume.
 
+### The map, and what it is allowed to say
+
+The flow map is the page's hero, and it draws the `one_end_regional` bucket — the
+4.8% of volume with a real home market at exactly one end. Eighteen markets have
+any at all.
+
+Three constraints keep it honest:
+
+* **The hub has no location.** It is drawn as a dashed ring over open
+  mid-Atlantic and captioned "no location". Placing it on a country, or dropping
+  the arcs so bubbles implied self-contained national flows, would each assert
+  something false. The arcs terminating in a placeless ring is the finding
+  rendered, not a compromise.
+* **Direction is kept, not netted away.** A market taking delivery from hubs and
+  a market shipping to them are opposite behaviours. The map colours by net
+  direction but the table prints inbound and outbound separately, because a
+  single signed total blurs the two.
+* **Bubble area, not radius, carries volume.** Radius-linear scaling
+  over-represents the largest markets by the square.
+
+A market's absence from the map means no *labelled* flow was observed, which is
+not the same as no flow. Tron is not covered at all, and most retail activity
+never takes the shape of an exchange-to-exchange transfer. Mexico appears with
+essentially nothing despite Bitso being one of the better-labelled regional
+venues — that is a statement about label coverage and settlement topology, not
+about Mexican stablecoin usage.
+
 ### Why the two legs are not chained
 
 The obvious next move is to read a Bitso→Binance flow and a Binance→Coins.ph flow

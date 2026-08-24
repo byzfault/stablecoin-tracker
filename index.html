@@ -37,6 +37,45 @@
 
   <p class="status-strip" id="statusStrip" hidden></p>
 
+  <!-- ================= Flow map: the hero ================================
+       Where labelled stablecoin settlement touches ground, and which way it
+       moves. Deliberately NOT a corridor map: every flow drawn here has a
+       global venue at its far end, and that venue nets across all its
+       customers, so the other end of the journey is unknowable. The hub is
+       drawn as a placeless ring for exactly that reason. -->
+  <section class="card flowmap" id="flowMapSection" aria-labelledby="flowMapTitle">
+    <div class="card-head">
+      <div>
+        <h2 id="flowMapTitle">Where settlement touches ground <span class="proxy-tag">proxy</span></h2>
+        <p class="card-sub">
+          Labelled exchange flow with a real home market at one end. The other end
+          is a global venue with no location — so this shows where stablecoins
+          enter and leave national markets, not where they end up.
+        </p>
+      </div>
+      <button type="button" class="table-toggle" data-table="flowMapTable" aria-expanded="false">Table</button>
+    </div>
+
+    <p class="panel-meta" id="flowMapMeta"></p>
+
+    <div class="flowmap-wrap">
+      <div class="flowmap-chart" id="flowMapChart" role="img"
+           aria-describedby="flowMapFallback"></div>
+      <div class="flowmap-legend" id="flowMapLegend"></div>
+    </div>
+
+    <p class="section-note" id="flowMapNote"></p>
+
+    <!-- The map is one encoding of this data; the table is the other, and it is
+         the accessible one. Both are always present. -->
+    <div class="table-wrap" id="flowMapTable" hidden></div>
+    <p class="sr-only" id="flowMapFallback">
+      A world map showing national markets with observed stablecoin exchange
+      settlement, sized by volume and coloured by net direction. The same figures
+      are in the table behind the Table button.
+    </p>
+  </section>
+
   <!-- ================= Headline: the summary before any chart ============= -->
   <section class="headline" aria-labelledby="headlineTitle">
     <div class="headline-stats">

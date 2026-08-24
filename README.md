@@ -50,6 +50,38 @@ judged on when the pipeline last refreshed the file. FRED publishes M2 with a
 multi-month lag — that is not a pipeline failure. FRED not being fetched for six
 weeks is.
 
+## The flow map
+
+The page leads with a world map of where labelled stablecoin settlement touches
+ground: the 4.8% of volume with a real home market at exactly one end, drawn as
+bubbles on those 18 markets with arcs running out to a hub.
+
+**It is not a corridor map, and the design works hard to stop it being read as
+one.** Every flow on it has a global venue at its far end, and that venue nets
+across every customer it has, so the onward destination is not recoverable. The
+hub is therefore drawn as a dashed ring parked over open mid-Atlantic, captioned
+"no location" — visually part of the diagram, obviously not part of the
+geography. The arcs stopping there is the finding, not a rendering shortcut.
+
+Bubble **area** tracks gross volume (radius-linear would exaggerate the big
+markets by the square) and **colour** is net direction: green for markets taking
+delivery from hubs, orange for markets shipping to them. Not the existing
+`--pos`/`--neg` red/green, because money leaving a market is a direction rather
+than a bad outcome and red would editorialise.
+
+Every figure the map encodes is also in a table behind the **Table** button,
+which is the accessible encoding and the one that prints.
+
+| File | What it is |
+| --- | --- |
+| `data/world_110m.geo.json` | Natural Earth 1:110m country shapes, public domain. Stripped to ISO code plus name and rounded to 2dp — 839KB to 174KB, 54KB gzipped. |
+| `data/market_centroids.json` | ISO3 → [lon, lat], the centroid of each country's *largest* polygon, so Indonesia and the USA do not land in the ocean. Micro-states Natural Earth omits are hand-set to the city. |
+| `market_legs` in `corridors.json` | Per-market inbound/outbound/net, hub counterparties, local venues. |
+
+Both geo files are optional at runtime: if either fails to load the map degrades
+to its table, so a failed geometry fetch costs presentation and never
+information.
+
 ## Live data
 
 The committed snapshot renders the page. After that render finishes, the browser
@@ -146,6 +178,8 @@ Serve over HTTP rather than opening `index.html` directly — browsers block
 index.html              The dashboard.
 assets/                 Styles and the one script. No build step, no framework.
 assets/app.js           Dashboard, plus the LIVE block and the live layer.
+data/world_110m.geo.json  Basemap. Natural Earth, public domain.
+data/market_centroids.json  ISO3 -> [lon, lat] for the map's bubbles.
 config.json             Query id, freshness windows, cost assumptions.
 data/                   Committed snapshots. This is the point of the repo.
 data/venue_markets.csv  Hand-curated venue → home market map.
