@@ -167,9 +167,15 @@ h1 { font-size: 1.4rem; font-weight: 650; letter-spacing: -0.01em; }
   :root:not([data-theme="light"]) .stale-badge {
     color: #e0c477; background: #2a2413; border-color: #4d431f;
   }
+  :root:not([data-theme="light"]) .live-badge {
+    color: #7fce9d; background: #10251a; border-color: #23492f;
+  }
 }
 :root[data-theme="dark"] .stale-badge {
   color: #e0c477; background: #2a2413; border-color: #4d431f;
+}
+:root[data-theme="dark"] .live-badge {
+  color: #7fce9d; background: #10251a; border-color: #23492f;
 }
 
 .load-error {
@@ -308,12 +314,21 @@ thead th {
 }
 .panel-meta a { color: var(--text-muted); text-decoration: underline; }
 
-.stale-badge {
+.stale-badge,
+.live-badge {
   display: inline-block; margin-left: 4px; padding: 1px 7px;
   font-size: 0.625rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.05em;
   color: #7a5b12; background: #fdf3d7; border: 1px solid #e8d49a;
   border-radius: 999px; cursor: help;
+}
+
+/* Green against the stale badge's amber. The pair is distinguishable by
+ * lightness as well as hue, so it survives both colourblind vision and the
+ * greyscale print stylesheet — and each badge carries its word, so colour is
+ * never the only thing saying which state a panel is in. */
+.live-badge {
+  color: #1c6135; background: #e6f4ea; border-color: #a8d5b9;
 }
 
 .attribution-line {

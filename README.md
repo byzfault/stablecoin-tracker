@@ -7,9 +7,13 @@ A static dashboard tracking stablecoin supply across chains and issuers, sized
 against US monetary aggregates, with an explicitly labelled proxy for
 cross-border corridor flow.
 
-The page makes no API calls. Everything it renders is JSON committed under
-`data/`, refreshed by scheduled GitHub Actions. The site cannot break because an
-upstream service is slow, rate limited or down, and it costs nothing to serve.
+Everything the page renders is JSON committed under `data/`, refreshed by
+scheduled GitHub Actions. That snapshot paints first and is what the site
+falls back to, so it cannot break because an upstream service is slow, rate
+limited or down, and it costs nothing to serve.
+
+Once that render is complete, the browser makes one further attempt to fetch the
+headline figures live from DefiLlama. See [Live data](#live-data).
 
 ## Data pipeline
 
@@ -20,6 +24,7 @@ upstream service is slow, rate limited or down, and it costs nothing to serve.
 | Corridor build | `scripts/build_corridors.py` | the above + `venue_markets.csv` | daily | `corridors` |
 | Remittance context | `scripts/fetch_worldbank.py` | World Bank, KNOMAD | monthly | `remittance_costs` `knomad_matrix` `countries` |
 | Freshness gate | `scripts/check_freshness.py` | the committed snapshots | every run | exit status |
+| Live headline | `assets/app.js` (`LIVE`) | DefiLlama, in the browser | every page load | replaces the headline KPIs in place |
 
 Two workflows drive it: `daily.yml` at 06:12 UTC and `monthly.yml` on the 3rd of
 each month. Both commit whatever they retrieved, then run the freshness gate.
@@ -44,6 +49,53 @@ apart on purpose: what is *printed* is the age of the data, while *staleness* is
 judged on when the pipeline last refreshed the file. FRED publishes M2 with a
 multi-month lag — that is not a pipeline failure. FRED not being fetched for six
 weeks is.
+
+## Live data
+
+The committed snapshot renders the page. After that render finishes, the browser
+fires one unawaited attempt to rebuild the headline KPIs — total supply, 30-day
+change, top chain, top issuer — directly from DefiLlama. On success the headline
+numbers are replaced in place and the panel meta line reads `fetched live` with a
+green `live` badge. On any failure at all, nothing happens and the reader keeps
+looking at the committed numbers.
+
+Ordering is the entire design. Because the snapshot has already painted, the live
+call is never on the critical path: a slow, rate-limited, CORS-blocked or garbled
+response costs the reader nothing. Live is an upgrade applied to a page that
+already works, never a precondition for it working. The failure path is a
+`console.warn` and a no-op — deliberately visible to the operator, invisible to
+the reader.
+
+**What goes live, and what does not.**
+
+| Panel | Live? | Why |
+| --- | --- | --- |
+| Headline KPIs | yes | Three requests, ~300KB compressed. These are the numbers people read and quote. |
+| Supply charts | no | Backed by a date × issuer × chain cube. Rebuilding it in the browser means dozens of requests and several megabytes, to move a daily series forward by at most one point. |
+| Share of US money | recomputed | The stablecoin numerator goes live; the FRED denominator does not need to. M2 publishes monthly with a multi-month lag. |
+| Corridor signals | no | Dune requires an API key, which can never be shipped to a browser. Server-side only, refreshed by the Action. |
+
+Each panel prints its own "Data as of" line, so a live headline sitting above a
+snapshot-backed chart states both ages rather than conflating them.
+
+**Be honest about what this buys.** DefiLlama's stablecoin supply updates roughly
+daily, so on a healthy day live gains a few hours over the 06:12 UTC refresh. The
+real value is the unhealthy day: if the Action fails, or its commit does not land,
+the headline is still correct because the reader's own browser went and asked. It
+closes the gap between "the pipeline is broken" and "the operator noticed" — a
+gap the freshness gate reports but cannot itself repair.
+
+`LIVE` at the top of `assets/app.js` holds the switch, the endpoint and the
+timeout. Setting `enabled: false` restores the original zero-API-call behaviour
+exactly.
+
+### Why the key cannot simply go in the browser
+
+Corridors stay server-side because a Dune API key shipped to a browser is a
+published key — "minified" is not "hidden", and the network tab shows it either
+way. Anyone loading the page could spend the account's credits. A serverless
+proxy would fix that, at the cost of a runtime dependency the rest of this
+design exists to avoid.
 
 ## Setup
 
@@ -93,6 +145,7 @@ Serve over HTTP rather than opening `index.html` directly — browsers block
 ```
 index.html              The dashboard.
 assets/                 Styles and the one script. No build step, no framework.
+assets/app.js           Dashboard, plus the LIVE block and the live layer.
 config.json             Query id, freshness windows, cost assumptions.
 data/                   Committed snapshots. This is the point of the repo.
 data/venue_markets.csv  Hand-curated venue → home market map.

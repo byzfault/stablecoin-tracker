@@ -20,6 +20,34 @@ Section headings only. Each section is a placeholder to be written.
 
 ## Refresh cadence and as-of timing
 
+Two mechanisms, and they are not the same thing.
+
+The **snapshot** is refreshed by a GitHub Action at 06:12 UTC daily (monthly for
+World Bank series) and committed to the repository. It is what renders the page,
+and it is what every chart on the page is drawn from.
+
+The **live layer** runs in the reader's browser after that render completes. It
+re-derives the headline KPIs — total supply, 30-day change, top chain, top issuer
+— straight from DefiLlama, using the same rules the pipeline uses, and replaces
+them in place. It touches nothing else.
+
+This means a single page can legitimately show two different as-of dates: a
+headline fetched minutes ago, above charts drawn from this morning's snapshot.
+That is not an inconsistency to be tidied away. Each panel prints its own "Data
+as of" line naming its own source and age, and a headline badged `live` is
+stating precisely that it did not come from the same place as the chart under it.
+
+The live figure and the snapshot figure are computed by duplicated logic — Python
+in `scripts/fetch_data.py`, JavaScript in `assets/app.js` — because the pipeline
+and the page share no runtime and the project has no build step. The rounding and
+peg-type rules are deliberately kept identical between them. If they ever drift,
+the symptom is a headline total that visibly jumps when the live fetch lands, and
+the fix is to reconcile the two, not to hide the jump.
+
+A failed live fetch is silent to the reader by design and logged to the console
+for the operator. The page falls back to the snapshot, which is the same thing it
+would have shown before the live layer existed.
+
 ## Known limitations
 
 ## Corridor Proxy

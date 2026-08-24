@@ -44,6 +44,38 @@
   var costChart = null;
   var state = { rangeDays: 0, chain: ALL, issuer: ALL, data: null };
 
+  /* ---- live layer -------------------------------------------------------
+   *
+   * The snapshot under data/ is still the thing that renders the page. It is
+   * committed, it is always there, and it paints before any network call is
+   * made. What follows runs *after* that first paint and tries to replace the
+   * headline numbers with figures pulled straight from the source.
+   *
+   * The ordering is the whole design. Snapshot first means the page has no
+   * dependency on DefiLlama being up: if the live fetch is slow, rate limited,
+   * CORS-blocked or simply wrong, nothing happens and the reader sees the
+   * committed numbers exactly as before. Live is an upgrade applied to a page
+   * that already works, never a precondition for it working.
+   *
+   * Scope is deliberately narrow. Only the headline KPIs go live, because they
+   * are the numbers people read and quote, and they cost three requests. The
+   * historical cube behind the charts is a date x issuer x chain matrix that
+   * would take dozens of requests and several megabytes to rebuild in the
+   * browser, to move a daily series forward by at most one point. That stays on
+   * the snapshot, and each panel prints its own "Data as of" line, so the two
+   * ages are never conflated.
+   */
+  var LIVE = {
+    enabled: true,
+    base: 'https://stablecoins.llama.fi',
+    /* Past this, give up and keep the snapshot. A reader staring at a spinner
+     * is worse off than one reading yesterday's number, and the snapshot is
+     * already on screen by the time this clock starts. */
+    timeoutMs: 9000,
+    pegType: 'peggedUSD'
+  };
+
+
   // ---- helpers ----------------------------------------------------------
 
   function cssVar(name) {
@@ -270,7 +302,8 @@
       source: s.source_name || 'DefiLlama',
       sourceUrl: s.source_url,
       cadence: s.update_cadence || 'daily',
-      staleAfterHours: 48
+      staleAfterHours: 48,
+      live: s.is_live === true
     });
   }
 
@@ -371,14 +404,21 @@
     var el = document.getElementById(elId);
     if (!el) return;
     var age = hoursSince(opts.fetchedAt || opts.asOf);
-    var stale = opts.stale || (age !== null && age > opts.staleAfterHours);
+    /* A panel fed live cannot be stale: it was fetched from source moments ago.
+     * Skipping the age test matters because the live payload's own as-of date
+     * is the upstream series date, which is routinely a day or two behind and
+     * would otherwise trip the very badge the live fetch just disproved. */
+    var stale = !opts.live && (opts.stale || (age !== null && age > opts.staleAfterHours));
     var parts = ['Data as of <time datetime="' + escapeHtml(opts.asOf || '') + '">'
                  + fmtStamp(opts.asOf) + '</time>'];
     parts.push(opts.sourceUrl
       ? '<a href="' + escapeHtml(opts.sourceUrl) + '">' + escapeHtml(opts.source) + '</a>'
       : escapeHtml(opts.source));
-    parts.push('updated ' + escapeHtml(opts.cadence));
+    parts.push(opts.live ? 'updated on page load' : 'updated ' + escapeHtml(opts.cadence));
     el.innerHTML = parts.join(' · ')
+      + (opts.live ? ' <span class="live-badge" title="Fetched from the source by your '
+                     + 'browser when this page loaded, not read from the committed '
+                     + 'snapshot.">live</span>' : '')
       + (stale ? ' <span class="stale-badge" title="This panel is older than its refresh '
                  + 'cadence. The last good snapshot is being shown.">stale</span>' : '');
   }
@@ -732,6 +772,154 @@
     });
   }
 
+  /* Ports of the three primitives in scripts/fetch_data.py that decide what a
+   * number means. They are duplicated rather than shared because the pipeline
+   * is Python and the page is a script tag with no build step — but they must
+   * agree, or the live headline and the snapshot headline would quietly differ
+   * in their rounding and a reader would see the total flicker on refresh. */
+
+  /* The API omits a peg type entirely rather than reporting zero. */
+  function pegValue(container) {
+    if (!container || typeof container !== 'object') return 0;
+    var v = container[LIVE.pegType];
+    return typeof v === 'number' && isFinite(v) ? v : 0;
+  }
+
+  function roundSupply(value) {
+    if (value === null || value === undefined || !isFinite(value)) return null;
+    return Math.round(value);
+  }
+
+  /* Chart points arrive as {date, totalCirculatingUSD:{peggedUSD:n}}. `date` is
+   * a unix second, sometimes as a string. Collapsed into a date->value map so
+   * duplicate days cannot double-count. */
+  function chartSeries(points) {
+    var out = {};
+    if (!Array.isArray(points)) return out;
+    points.forEach(function (pt) {
+      if (!pt) return;
+      var d = parseInt(pt.date, 10);
+      if (!isFinite(d)) return;
+      out[d] = pegValue(pt.totalCirculatingUSD);
+    });
+    return out;
+  }
+
+  function getJSON(path, signal) {
+    return fetch(LIVE.base + path, { signal: signal, mode: 'cors', cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error(path + ' returned HTTP ' + r.status);
+        return r.json();
+      });
+  }
+
+  /* Rebuilds the summary.json payload from source, in the browser.
+   *
+   * Mirrors build_summary() in scripts/fetch_data.py: the 30-day change is
+   * measured 30 points back in the series rather than by calendar lookup,
+   * because the upstream series is daily and contiguous. Returns null on any
+   * failure at all — a partially rebuilt headline is worse than the snapshot,
+   * so there is no half-success path here.
+   */
+  async function fetchLiveSummary() {
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () { ctrl.abort(); }, LIVE.timeoutMs);
+    try {
+      var got = await Promise.all([
+        getJSON('/stablecoincharts/all', ctrl.signal),
+        getJSON('/stablecoinchains', ctrl.signal),
+        getJSON('/stablecoins', ctrl.signal)
+      ]);
+      var allChart = got[0];
+      var chainsNow = got[1];
+      var assets = (got[2] && got[2].peggedAssets) || got[2];
+
+      var totals = chartSeries(allChart);
+      var dates = Object.keys(totals).map(Number).sort(function (a, b) { return a - b; });
+      if (!dates.length) throw new Error('total supply chart contained no usable points');
+
+      var latestDate = dates[dates.length - 1];
+      var latest = totals[latestDate];
+
+      var change30 = null, change30pct = null;
+      if (dates.length > 30) {
+        var previous = totals[dates[dates.length - 31]];
+        change30 = latest - previous;
+        if (previous) change30pct = (latest - previous) / previous * 100;
+      }
+
+      var rankedChains = (Array.isArray(chainsNow) ? chainsNow : []).map(function (e) {
+        return { name: e.name || '?', value: pegValue(e.totalCirculatingUSD) };
+      }).sort(function (a, b) { return b.value - a.value; });
+
+      var rankedIssuers = (Array.isArray(assets) ? assets : []).map(function (a) {
+        return { name: a.symbol || '?', value: pegValue(a.circulating) };
+      }).sort(function (a, b) { return b.value - a.value; });
+
+      if (!rankedChains.length || !rankedIssuers.length) {
+        throw new Error('chain or issuer ranking came back empty');
+      }
+
+      var chainTotal = rankedChains.reduce(function (t, c) { return t + c.value; }, 0) || 1;
+      var issuerTotal = rankedIssuers.reduce(function (t, i) { return t + i.value; }, 0) || 1;
+
+      return {
+        as_of: latestDate,
+        total_supply: roundSupply(latest),
+        change_30d: change30 === null ? null : roundSupply(change30),
+        change_30d_pct: change30pct === null ? null : Math.round(change30pct * 100) / 100,
+        top_chain: {
+          name: rankedChains[0].name,
+          supply: roundSupply(rankedChains[0].value),
+          share_pct: Math.round(rankedChains[0].value / chainTotal * 10000) / 100
+        },
+        top_issuer: {
+          name: rankedIssuers[0].name,
+          supply: roundSupply(rankedIssuers[0].value),
+          share_pct: Math.round(rankedIssuers[0].value / issuerTotal * 10000) / 100
+        },
+        peg_type: LIVE.pegType,
+        fetched_at: new Date().toISOString(),
+        source_name: 'DefiLlama',
+        source_url: LIVE.base,
+        update_cadence: 'daily',
+        is_live: true
+      };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  /* Applied after the snapshot has already rendered. Every failure path here is
+   * a no-op by design: the catch swallows the error and the page keeps the
+   * numbers it is already showing. The console line is for the operator, since
+   * a silent downgrade the maintainer never learns about is how a live layer
+   * rots into a permanently dead one. */
+  async function upgradeToLive() {
+    if (!LIVE.enabled || typeof AbortController === 'undefined') return;
+    try {
+      var live = await fetchLiveSummary();
+      if (!live || live.total_supply === null) return;
+
+      /* The snapshot is kept, not overwritten. renderScale() and the charts
+       * still read from it, and keeping it lets the meta line say how far the
+       * live figure has moved the committed one. */
+      state.data.snapshotSummary = state.data.summary;
+      state.data.summary = live;
+
+      renderHeadline();
+      renderScale();
+    } catch (error) {
+      if (error && error.name === 'AbortError') {
+        console.warn('[live] DefiLlama did not answer within '
+          + LIVE.timeoutMs + 'ms — keeping the committed snapshot.');
+      } else {
+        console.warn('[live] live refresh failed, keeping the committed snapshot:',
+          error && error.message ? error.message : error);
+      }
+    }
+  }
+
   async function init() {
     try {
       var files = ['summary', 'matrix', 'reference', 'meta'];
@@ -762,6 +950,12 @@
       buildFilters();
       bindControls();
       draw();
+
+      /* Deliberately not awaited. The page is complete at this point; the live
+       * refresh is allowed to land late or never, and nothing below it depends
+       * on the result. Awaiting here would put an upstream API back on the
+       * critical path, which is exactly what the snapshot exists to avoid. */
+      upgradeToLive();
     } catch (error) {
       var el = document.getElementById('loadError');
       el.textContent = 'Could not load the data files. If you are running locally, serve the '
