@@ -1,6 +1,6 @@
 {
   "corridor": {
-    "dune_query_id": null,
+    "dune_query_id": 8425636,
     "results_max_age_hours": 24,
     "execute_min_interval_hours": 24,
     "execution_timeout_seconds": 900,

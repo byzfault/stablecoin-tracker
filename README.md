@@ -166,6 +166,21 @@ The numbers are a floor and a shape, not a measurement.
 [METHODOLOGY.md](METHODOLOGY.md#corridor-proxy) sets out the whole method and
 every limit worth knowing.
 
+**The first real run returned zero corridors, and the panel says so.** Over the
+91 days to 24 August 2026, $12.24bn moved between labelled exchange addresses and
+none of it resolved to a market pair: 95.2% had a global venue at *both* ends,
+4.8% had one end in a real market and the other in a hub.
+
+That is the finding, not a configuration problem. Regional exchanges here do not
+settle with each other — they settle with hubs, and nearly always with Binance or
+Bitfinex. Corridor-level flow is structurally absent from exchange-to-exchange
+onchain data rather than merely hard to see.
+
+Chaining two hub legs into one corridor would manufacture the number everyone
+wants. A hub nets across all its customers, so the dollars in are not the dollars
+out, and any match would be an artefact of the matching rule. The panel reports
+the legs and stops.
+
 ## Licence
 
 MIT. Data belongs to its respective sources; this dashboard is not affiliated

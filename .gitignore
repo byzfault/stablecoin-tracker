@@ -15,3 +15,11 @@ venv/
 # Local experiments — data/ itself IS committed, that is the point of the repo,
 # but anything a local run scratches out under data/tmp/ is not.
 data/tmp/
+
+# Secrets. DUNE_API_KEY reaches the pipeline through the environment — from a
+# repo secret in CI, or from one of these locally. Nothing here is ever
+# committed, and the key must not appear in config.json, which is.
+.env
+.env.*
+*.key
+dune_key

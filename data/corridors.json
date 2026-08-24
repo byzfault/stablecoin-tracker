@@ -1,0 +1,133 @@
+{
+ "attribution": {
+  "blocked_by": {
+   "global_both_ends": {
+    "share_pct": 95.2,
+    "transfer_count": 7598,
+    "usd_volume": 11649304313.45
+   },
+   "one_end_regional": {
+    "share_pct": 4.8,
+    "transfer_count": 1656,
+    "usd_volume": 590751185.31
+   },
+   "unmapped_end": {
+    "share_pct": 0.0,
+    "transfer_count": 0,
+    "usd_volume": 0.0
+   }
+  },
+  "corridor_share_pct": 0.0,
+  "corridor_usd": 0,
+  "domestic_usd": 799344.02,
+  "top_unattributed_venues": [
+   {
+    "usd_volume": 11051783613.08,
+    "venue": "Binance"
+   },
+   {
+    "usd_volume": 9621042027.29,
+    "venue": "Bitfinex"
+   },
+   {
+    "usd_volume": 568676540.24,
+    "venue": "Revolut"
+   },
+   {
+    "usd_volume": 461673789.05,
+    "venue": "Bitstamp"
+   },
+   {
+    "usd_volume": 341220717.58,
+    "venue": "Matrixport"
+   },
+   {
+    "usd_volume": 310098217.9,
+    "venue": "Bybit"
+   },
+   {
+    "usd_volume": 252001144.24,
+    "venue": "ChangeNOW"
+   },
+   {
+    "usd_volume": 195489362.66,
+    "venue": "OKX"
+   },
+   {
+    "usd_volume": 159122907.57,
+    "venue": "Copper"
+   },
+   {
+    "usd_volume": 154223371.08,
+    "venue": "Coinbase"
+   }
+  ],
+  "total_labelled_usd": 12240854842.78,
+  "unattributed_share_pct": 100.0,
+  "unattributed_usd": 12240055498.76
+ },
+ "corridors": [],
+ "cost_assumptions": {
+  "network_fee_usd": 0.45,
+  "note": "Assumption, not a measurement. A blended stablecoin transfer fee plus a typical exchange withdrawal fee on the reference $200 send. It excludes the on-ramp and off-ramp spreads, which is where most of the real cost of this route sits, so treat it as a floor.",
+  "send_amount_usd": 200,
+  "venue_withdrawal_fee_usd": 1.0
+ },
+ "data_as_of": "2026-08-24T08:44:56+00:00",
+ "fetched_at": "2026-08-24T08:53:45+00:00",
+ "flows_fetched_at": "2026-08-24T08:44:56+00:00",
+ "source_name": "Dune Analytics + curated venue map",
+ "source_url": "https://dune.com/queries/8425636",
+ "stale": false,
+ "trend_window_days": 30,
+ "update_cadence": "daily",
+ "venue_diagnostics": {
+  "mapped_but_unseen": [
+   "Binance US",
+   "Bitbank",
+   "Bitci",
+   "Bitcoin Suisse",
+   "Bithumb",
+   "BtcTurk",
+   "CoinDCX",
+   "CoinSwitch",
+   "Coincheck",
+   "Coinjar",
+   "Coinmerce",
+   "Coinone",
+   "Coinsquare",
+   "Delta Exchange",
+   "Emirex",
+   "Firi",
+   "GMO Coin",
+   "GOPAX",
+   "Gemini",
+   "Korbit",
+   "Kuna",
+   "NDAX",
+   "Netcoins",
+   "Nobitex",
+   "Norwegian Block Exchange",
+   "Panda Exchange",
+   "Paribu",
+   "QMall",
+   "Ripio",
+   "Shakepay",
+   "SwissBorg",
+   "Tokenize Xchange",
+   "Tokocrypto",
+   "Upbit Indonesia",
+   "WazirX",
+   "Wealthsimple",
+   "Zipmex",
+   "Zonda",
+   "bitFlyer"
+  ],
+  "unmapped_venues": []
+ },
+ "window": {
+  "days": 91,
+  "end": "2026-08-24",
+  "start": "2026-05-26"
+ }
+}

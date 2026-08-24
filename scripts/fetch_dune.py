@@ -92,8 +92,16 @@ def request(
     *,
     params: dict[str, Any] | None = None,
     payload: dict[str, Any] | None = None,
+    not_found_ok: bool = False,
 ) -> dict[str, Any]:
-    """Call the Dune API with retries, returning the decoded JSON body."""
+    """Call the Dune API with retries, returning the decoded JSON body.
+
+    ``not_found_ok`` turns a 404 into an empty dict rather than an error. Only
+    the cached-results probe sets it, and only because on that endpoint a 404 is
+    a fact about the query rather than a fault: it means no execution has ever
+    produced a result set. Retrying that is pointless and reporting it as a
+    failure would be wrong.
+    """
     url = f"{API_BASE}{path}"
     last_error: Exception | None = None
 
@@ -116,6 +124,8 @@ def request(
                 )
             if response.status_code == 429:
                 raise DuneError(f"429 rate limited by Dune on {path}")
+            if response.status_code == 404 and not_found_ok:
+                return {}
             response.raise_for_status()
             return response.json()
         except DuneError:
@@ -182,12 +192,21 @@ def hours_since(moment: datetime | None, now: datetime) -> float | None:
 # ---------------------------------------------------------------------------
 
 def latest_result_probe(session: requests.Session, query_id: int) -> dict[str, Any]:
-    """Fetch one row of the latest cached results, to read its timestamps cheaply."""
+    """Fetch one row of the latest cached results, to read its timestamps cheaply.
+
+    Returns an empty dict when the query has never been executed. That is the
+    cold-start case — a query id that was only just saved has no result set
+    behind it — and the caller reads the resulting absent timestamp as "no
+    cached execution", which is what triggers the first run. Treating the 404 as
+    an error instead would leave a new query permanently unable to bootstrap
+    itself: no results, so no execution; no execution, so no results.
+    """
     return request(
         session,
         "GET",
         f"/query/{query_id}/results",
         params={"limit": 1},
+        not_found_ok=True,
     )
 
 

@@ -439,18 +439,132 @@
          + (t * 26).toFixed(1) + '%, transparent)"';
   }
 
+  /* The zero-corridor result.
+   *
+   * This is a finding, not a gap, and it is the most quotable thing on the page
+   * — so it gets stated with its own numbers rather than hidden behind an
+   * apology. Every labelled venue-to-venue flow in the window had a global
+   * venue on at least one end. Regional exchanges in this data do not settle
+   * with each other; they settle through hubs.
+   *
+   * The temptation is to chain two hub legs into one corridor — read a
+   * Bitso->Binance flow and a Binance->Coins.ph flow as MEX->PHL. Nothing in
+   * the data supports that link. The hub nets across every customer, so the
+   * dollars arriving and the dollars leaving are not the same dollars, and
+   * matching them on time and size would be manufacturing the exact geography
+   * METHODOLOGY.md says never to manufacture. So the panel reports the legs and
+   * stops there. */
+  function renderNoCorridors(data) {
+    var body = document.getElementById('corridorBody');
+    var a = data.attribution || {};
+    var blocked = a.blocked_by || {};
+    var both = blocked.global_both_ends || {};
+    var one = blocked.one_end_regional || {};
+    var unmapped = blocked.unmapped_end || {};
+    var win = data.window || {};
+
+    var rows = [
+      ['Both ends a global venue', both,
+       'No geography at either end. Hub-to-hub settlement and market-making.'],
+      ['One end a real market, one end a hub', one,
+       'The closest this data comes to a corridor — but only one leg of it is visible.'],
+      ['An end with no mapped home market', unmapped,
+       'A venue absent from the map. Unknown defaults to unattributed.'],
+      ['Both ends in the same market', {usd_volume: a.domestic_usd, share_pct: null},
+       'Domestic, so not a corridor by definition.']
+    ];
+
+    var html = ''
+      + '<p class="attribution-line">'
+      +   'Over ' + (win.days || 90) + ' days, <strong>' + usd(a.total_labelled_usd) + '</strong> '
+      +   'moved between labelled exchange addresses. '
+      +   '<strong>None of it</strong> resolved to a corridor: every flow had a global '
+      +   'venue on at least one end, so attributing any of it to a market pair would '
+      +   'have meant inventing the geography.'
+      + '</p>'
+      + '<div class="table-wrap is-open"><table class="corridor-table">'
+      + '<caption class="sr-only">Why no labelled flow resolved to a market pair</caption>'
+      + '<thead><tr><th scope="col">Why it is not a corridor</th>'
+      +   '<th scope="col" class="num">Volume</th><th scope="col" class="num">Share</th>'
+      +   '<th scope="col">What it is</th></tr></thead><tbody>';
+
+    rows.forEach(function (r) {
+      var v = r[1] || {};
+      if (!v.usd_volume) return;
+      html += '<tr><th scope="row">' + r[0] + '</th>'
+        + '<td class="num">' + usd(v.usd_volume) + '</td>'
+        + '<td class="num">' + (v.share_pct === null || v.share_pct === undefined
+            ? '&lt;0.1%' : v.share_pct.toFixed(1) + '%') + '</td>'
+        + '<td class="cell-note">' + r[2] + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+
+    /* The venues doing the blocking, named. A reader who wants to know which
+     * venues absorb this volume is asking a fair question, and this answers it
+     * without pretending a hub leg is a corridor.
+     *
+     * These figures overlap and must say so. A flow is credited to whichever of
+     * its ends prevented attribution, and a hub-to-hub transfer has two such
+     * ends, so it is counted under both. They therefore sum to well above the
+     * window total and are a per-venue involvement figure, not a partition of
+     * it. Printing them beside a total without that caveat would invite the
+     * obvious wrong subtraction. */
+    var legs = (a.top_unattributed_venues || []).slice(0, 6);
+    if (legs.length) {
+      html += '<p class="section-note"><strong>Venues absorbing it.</strong> '
+        + legs.map(function (v) {
+            return escapeHtml(v.venue) + ' ' + usd(v.usd_volume);
+          }).join(' · ')
+        + ' <span class="cell-note">Each flow is counted at both of its ends, so '
+        + 'these overlap and do not sum to the window total.</span></p>';
+    }
+
+    html += '<p class="section-note">'
+      + 'Two hub legs cannot be chained into one corridor: a venue nets across all '
+      + 'its customers, so the dollars in are not the dollars out. This panel reports '
+      + 'what was measured and stops there. '
+      + '<a href="METHODOLOGY.md#corridor-proxy">Method and limits</a>.'
+      + '</p>';
+
+    body.innerHTML = html;
+  }
+
   function renderCorridors(data) {
     var body = document.getElementById('corridorBody');
     var costSection = document.querySelector('.corridor-cost');
 
+    /* Two different empty states, and conflating them would be the single most
+     * misleading thing this panel could do. "Not configured yet" and "ran, and
+     * the answer is zero" look identical in the data — both are an empty
+     * corridors array — but one is a setup instruction and the other is a
+     * finding. The presence of an attribution block is what separates them: the
+     * builder only writes one when it has actually classified some volume. */
+    var ran = !!(data && data.attribution && data.attribution.total_labelled_usd);
+
     if (!data || !data.corridors || !data.corridors.length) {
-      body.innerHTML = '<p class="section-note">'
-        + 'No corridor data yet. Set <code>corridor.dune_query_id</code> in '
-        + '<code>config.json</code> and run <code>scripts/fetch_dune.py</code> with '
-        + '<code>DUNE_API_KEY</code> set, then <code>scripts/build_corridors.py</code>.'
-        + '</p>';
       if (costSection) costSection.hidden = true;
-      document.getElementById('corridorMeta').textContent = '';
+
+      if (!ran) {
+        body.innerHTML = '<p class="section-note">'
+          + 'No corridor data yet. Set <code>corridor.dune_query_id</code> in '
+          + '<code>config.json</code> and run <code>scripts/fetch_dune.py</code> with '
+          + '<code>DUNE_API_KEY</code> set, then <code>scripts/build_corridors.py</code>.'
+          + '</p>';
+        document.getElementById('corridorMeta').textContent = '';
+        return;
+      }
+
+      renderPanelMeta('corridorMeta', {
+        asOf: data.data_as_of || data.fetched_at,
+        fetchedAt: data.fetched_at,
+        source: data.source_name || 'Dune Analytics',
+        sourceUrl: data.source_url,
+        cadence: data.update_cadence || 'daily',
+        stale: data.stale,
+        staleAfterHours: 48
+      });
+
+      renderNoCorridors(data);
       return;
     }
 

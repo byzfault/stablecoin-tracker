@@ -161,6 +161,72 @@ received by the destination country from all sources (`BX.TRF.PWKR.CD.DT`),
 labelled as such. The two are an order of magnitude apart and the table says
 which one it is showing.
 
+### The measured result: no corridors
+
+The panel predicted the attributed share would be small. On the first real run it
+was **zero**, and that is worth stating precisely rather than softening.
+
+Over the 91 days to 24 August 2026, the query returned 2,588 labelled
+venue-to-venue rows totalling **$12.24bn**. Not one resolved to a market pair:
+
+| | Volume | Share |
+| --- | --- | --- |
+| Both ends a global venue | $11.65bn | 95.2% |
+| One end a real market, one end a hub | $591m | 4.8% |
+| Both ends in the same market (domestic) | $0.8m | <0.1% |
+| **A corridor** | **$0** | **0.0%** |
+
+The shape behind that zero is the actual finding. Regional exchanges in this data
+do not settle with each other — they settle with hubs, and almost exclusively
+with two of them. Brasil Bitcoin sent $130m, of which $130m went to Binance.
+Indodax: $111m, essentially all Binance. Upbit $70m and Luno $66m, both to
+Bitfinex. Every regional venue's counterparty list is one or two global names and
+a rounding error.
+
+So corridor-level flow is not directly observable in exchange-to-exchange onchain
+data. Not "hard to see" — structurally absent, because the settlement topology is
+a hub and spoke, and a corridor would require a spoke-to-spoke edge that does not
+exist in any volume.
+
+### Why the two legs are not chained
+
+The obvious next move is to read a Bitso→Binance flow and a Binance→Coins.ph flow
+as one MEX→PHL corridor. This is not done, and will not be.
+
+A hub nets across every customer it has. The dollars arriving from Bitso are not
+the dollars leaving to Coins.ph; they are fungible balance on an exchange that is
+simultaneously serving market makers, treasury operations and millions of
+unrelated users. Matching legs on timing and size would produce a number, and
+that number would be an artefact of the matching rule rather than a measurement
+of anything. It would also be the most quotable figure on the page — which is
+exactly why it is the one most worth refusing to compute.
+
+What the panel does instead is report the legs, name the hubs, and stop.
+
+### What the venue map is now for
+
+Given the above, the map's job has changed. It was built to turn venue pairs into
+market pairs; it currently produces none. What it still does is classify, and the
+classification is what makes the zero meaningful: without it, "no corridors" is
+indistinguishable from "we did not label enough venues".
+
+Every venue observed in the result set now carries a row, which is why the
+unmapped share is 0.0%. Most additions were global by nature rather than regional
+— custody (BitGo, Copper, Ceffu, Anchorage), OTC desks (FalconX, Nonco), on-ramps
+and processors (MoonPay, Simplex, Transak, BitPay), instant-swap services
+(ChangeNOW, FixedFloat, SimpleSwap), lending (Nexo), and gambling (Stake.com,
+Rollbit, Roobet), where a deposit is a bet rather than a cross-border payment.
+
+Revolut is mapped `GLOBAL` despite being a single company, because its crypto arm
+serves roughly thirty European markets at once. Pinning it to `GBR` would invent a
+geography in exactly the way attributing a Binance flow would.
+
+Every venue added was observed in the live result set, so each is label-verified
+by construction — the check this document demands of a new row is satisfied by
+the fact that it appeared in the data at all. That is a stronger test than the
+original hand-curation, which checked names against a label seed and still left
+38 of 70 mapped venues with no observed flow.
+
 ### What this panel is for
 
 A shape and a floor: which market pairs show meaningful exchange-to-exchange

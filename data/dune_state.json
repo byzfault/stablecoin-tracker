@@ -1,0 +1,18 @@
+{
+ "credit_log": [
+  {
+   "at": "2026-08-24T08:44:10+00:00",
+   "error": "GET /query/8425636/results failed after 3 attempts: 404 Client Error: Not Found for url: https://api.dune.com/api/v1/query/8425636/results?limit=1",
+   "executed": false
+  },
+  {
+   "at": "2026-08-24T08:44:56+00:00",
+   "datapoints": 15528,
+   "estimated_result_credits": 15.53,
+   "executed": true,
+   "rows": 2588
+  }
+ ],
+ "last_execution_at": "2026-08-24T08:44:56+00:00",
+ "last_execution_id": "01M0SF3DEAXX0SD35Z4PTS1THM"
+}

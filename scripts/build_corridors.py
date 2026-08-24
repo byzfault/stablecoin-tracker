@@ -163,6 +163,18 @@ def build(
 
     corridors: dict[tuple[str, str], dict[str, Any]] = {}
     unattributed = {"usd_volume": 0.0, "transfer_count": 0, "venues": defaultdict(float)}
+    # Why a flow failed to become a corridor, split by how many of its two ends
+    # carry a real home market. "Unattributed" on its own says a corridor could
+    # not be built; this says whether that is because the flow has no geography
+    # at all (both ends global infrastructure) or because it has exactly one end
+    # in a real market and the other in a hub. The second is the interesting
+    # number: it is the closest thing to a corridor this data can see, and its
+    # size relative to the first is the shape of the whole result.
+    blocked = {
+        "global_both_ends": {"usd_volume": 0.0, "transfer_count": 0},
+        "one_end_regional": {"usd_volume": 0.0, "transfer_count": 0},
+        "unmapped_end": {"usd_volume": 0.0, "transfer_count": 0},
+    }
     domestic = {"usd_volume": 0.0, "transfer_count": 0}
     seen_venues: dict[str, float] = defaultdict(float)
     unmapped_venues: dict[str, float] = defaultdict(float)
@@ -201,6 +213,15 @@ def build(
             unattributed["transfer_count"] += count
             for name in blockers:
                 unattributed["venues"][name] += usd
+
+            if src is None or dst is None:
+                reason = "unmapped_end"
+            elif src["home_market"] == "GLOBAL" and dst["home_market"] == "GLOBAL":
+                reason = "global_both_ends"
+            else:
+                reason = "one_end_regional"
+            blocked[reason]["usd_volume"] += usd
+            blocked[reason]["transfer_count"] += count
             continue
 
         if src["home_market"] == dst["home_market"]:
@@ -320,6 +341,16 @@ def build(
             "top_unattributed_venues": [
                 {"venue": name, "usd_volume": round(vol, 2)} for name, vol in top_unattributed
             ],
+            "blocked_by": {
+                reason: {
+                    "usd_volume": round(v["usd_volume"], 2),
+                    "transfer_count": v["transfer_count"],
+                    "share_pct": (
+                        round(v["usd_volume"] / total_volume * 100, 1) if total_volume else 0.0
+                    ),
+                }
+                for reason, v in blocked.items()
+            },
         },
         # Reconciliation aids. The Dune labels move underneath this file, so the
         # two lists below are how the curated map is kept honest: venues seen in
