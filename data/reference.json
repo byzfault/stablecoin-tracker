@@ -10,25 +10,25 @@
    "value_usd": 2415653000000
   },
   {
-   "as_of": "2026-06-01",
+   "as_of": "2026-07-01",
    "id": "M1SL",
    "label": "US M1 money supply",
    "note": "Currency plus demand deposits and other liquid deposits.",
    "short": "US M1",
    "source_url": "https://fred.stlouisfed.org/series/M1SL",
-   "value_usd": 19831500000000
+   "value_usd": 19886400000000
   },
   {
-   "as_of": "2026-06-01",
+   "as_of": "2026-07-01",
    "id": "M2SL",
    "label": "US M2 money supply",
    "note": "M1 plus savings, small time deposits and retail money-market funds.",
    "short": "US M2",
    "source_url": "https://fred.stlouisfed.org/series/M2SL",
-   "value_usd": 23155200000000
+   "value_usd": 23218000000000
   }
  ],
- "fetched_at": "2026-08-25T07:06:22+00:00",
+ "fetched_at": "2026-08-26T07:06:25+00:00",
  "source": "Federal Reserve Economic Data (FRED)",
  "source_name": "FRED, St. Louis Fed",
  "source_url": "https://fred.stlouisfed.org/",
