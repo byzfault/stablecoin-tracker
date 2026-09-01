@@ -50,6 +50,11 @@
    "at": "2026-08-31T13:40:00+00:00",
    "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
    "executed": false
+  },
+  {
+   "at": "2026-09-01T11:35:20+00:00",
+   "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
+   "executed": false
   }
  ],
  "last_execution_at": "2026-08-26T07:06:25+00:00",
