@@ -3,7 +3,7 @@
   "1 negative issuer/chain balance(s) reported upstream were floored at zero for the stacked charts."
  ],
  "errors": [],
- "fetched_at": "2026-09-04T11:13:22+00:00",
+ "fetched_at": "2026-09-05T10:30:57+00:00",
  "files_written": [
   "chains.json",
   "issuers.json",
@@ -16,7 +16,7 @@
   "Tron",
   "Solana"
  ],
- "generated_at": "2026-09-04T11:13:22+00:00",
+ "generated_at": "2026-09-05T10:30:57+00:00",
  "peg_type": "peggedUSD",
  "source": "https://stablecoins.llama.fi",
  "source_name": "DefiLlama",
