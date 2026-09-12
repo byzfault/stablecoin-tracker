@@ -4,8 +4,8 @@
   "end": "2026-09-11",
   "start": "2026-06-13"
  },
- "executed_this_run": true,
- "fetched_at": "2026-09-11T11:14:49+00:00",
+ "executed_this_run": false,
+ "fetched_at": "2026-09-12T10:40:57+00:00",
  "notes": [],
  "query_id": 8425636,
  "row_count": 2467,
