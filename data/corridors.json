@@ -3,13 +3,13 @@
   "blocked_by": {
    "global_both_ends": {
     "share_pct": 95.2,
-    "transfer_count": 7566,
-    "usd_volume": 10682529035.38
+    "transfer_count": 7564,
+    "usd_volume": 11167826983.88
    },
    "one_end_regional": {
     "share_pct": 4.8,
-    "transfer_count": 1924,
-    "usd_volume": 537409734.4
+    "transfer_count": 1953,
+    "usd_volume": 565159519.83
    },
    "unmapped_end": {
     "share_pct": 0.0,
@@ -19,14 +19,14 @@
   },
   "corridor_share_pct": 0.0,
   "corridor_usd": 10798.38,
-  "domestic_usd": 499592.6,
+  "domestic_usd": 399665.6,
   "top_unattributed_venues": [
    {
-    "usd_volume": 10141978108.18,
+    "usd_volume": 10639797011.82,
     "venue": "Binance"
    },
    {
-    "usd_volume": 8661097077.48,
+    "usd_volume": 9193928022.15,
     "venue": "Bitfinex"
    },
    {
@@ -34,37 +34,37 @@
     "venue": "Matrixport"
    },
    {
-    "usd_volume": 417451821.86,
+    "usd_volume": 399316660.04,
     "venue": "Revolut"
    },
    {
-    "usd_volume": 398217182.24,
+    "usd_volume": 391124592.49,
     "venue": "Bitstamp"
    },
    {
-    "usd_volume": 328825830.84,
+    "usd_volume": 328824753.16,
     "venue": "Bybit"
    },
    {
-    "usd_volume": 248510418.52,
+    "usd_volume": 249610143.59,
     "venue": "OKX"
    },
    {
-    "usd_volume": 222647060.5,
-    "venue": "ChangeNOW"
-   },
-   {
-    "usd_volume": 219552633.68,
+    "usd_volume": 220552177.95,
     "venue": "Copper"
    },
    {
-    "usd_volume": 147736234.61,
+    "usd_volume": 218753847.18,
+    "venue": "ChangeNOW"
+   },
+   {
+    "usd_volume": 148606402.35,
     "venue": "Nexo"
    }
   ],
-  "total_labelled_usd": 11220449160.76,
+  "total_labelled_usd": 11733396967.69,
   "unattributed_share_pct": 100.0,
-  "unattributed_usd": 11219938769.78
+  "unattributed_usd": 11732986503.71
  },
  "corridors": [
   {
@@ -105,15 +105,46 @@
   "send_amount_usd": 200,
   "venue_withdrawal_fee_usd": 1.0
  },
- "data_as_of": "2026-09-11T11:14:49+00:00",
- "fetched_at": "2026-09-12T10:40:58+00:00",
- "flows_fetched_at": "2026-09-12T10:40:57+00:00",
+ "data_as_of": "2026-09-13T11:45:32+00:00",
+ "fetched_at": "2026-09-13T11:46:49+00:00",
+ "flows_fetched_at": "2026-09-13T11:45:32+00:00",
  "market_legs": [
   {
    "confidence": "high",
    "counterparties": [
     {
-     "usd_volume": 97647600.96,
+     "usd_volume": 122357960.05,
+     "venue": "Binance"
+    },
+    {
+     "usd_volume": 18.95,
+     "venue": "KuCoin"
+    }
+   ],
+   "inbound_usd": 122357979.0,
+   "local_venues": [
+    {
+     "usd_volume": 121508344.1,
+     "venue": "Indodax"
+    },
+    {
+     "usd_volume": 849634.9,
+     "venue": "Reku"
+    }
+   ],
+   "market": "IDN",
+   "name": "Indonesia",
+   "net_usd": 122357979.0,
+   "outbound_usd": 0.0,
+   "region": "EAP",
+   "total_usd": 122357979.0,
+   "transfer_count": 93
+  },
+  {
+   "confidence": "high",
+   "counterparties": [
+    {
+     "usd_volume": 98053020.95,
      "venue": "Binance"
     },
     {
@@ -121,7 +152,7 @@
      "venue": "Simplex"
     },
     {
-     "usd_volume": 2220195.77,
+     "usd_volume": 2343210.58,
      "venue": "FalconX"
     },
     {
@@ -133,10 +164,10 @@
      "venue": "Revolut"
     }
    ],
-   "inbound_usd": 100058544.97,
+   "inbound_usd": 100586979.77,
    "local_venues": [
     {
-     "usd_volume": 100058544.97,
+     "usd_volume": 100586979.77,
      "venue": "Brasil Bitcoin"
     },
     {
@@ -146,42 +177,38 @@
    ],
    "market": "BRA",
    "name": "Brazil",
-   "net_usd": 79529994.83,
+   "net_usd": 80058429.63,
    "outbound_usd": 20528550.14,
    "region": "LAC",
-   "total_usd": 120587095.11,
-   "transfer_count": 188
+   "total_usd": 121115529.91,
+   "transfer_count": 195
   },
   {
    "confidence": "high",
    "counterparties": [
     {
-     "usd_volume": 120470395.48,
-     "venue": "Binance"
+     "usd_volume": 89953066.0,
+     "venue": "Bitfinex"
     },
     {
-     "usd_volume": 18.95,
-     "venue": "KuCoin"
+     "usd_volume": 149808.3,
+     "venue": "Uphold"
     }
    ],
-   "inbound_usd": 120470414.43,
+   "inbound_usd": 0.0,
    "local_venues": [
     {
-     "usd_volume": 119508646.4,
-     "venue": "Indodax"
-    },
-    {
-     "usd_volume": 961768.03,
-     "venue": "Reku"
+     "usd_volume": 90102874.3,
+     "venue": "Upbit"
     }
    ],
-   "market": "IDN",
-   "name": "Indonesia",
-   "net_usd": 120470414.43,
-   "outbound_usd": 0.0,
+   "market": "KOR",
+   "name": "Korea, Rep.",
+   "net_usd": -90102874.3,
+   "outbound_usd": 90102874.3,
    "region": "EAP",
-   "total_usd": 120470414.43,
-   "transfer_count": 93
+   "total_usd": 90102874.3,
+   "transfer_count": 8
   },
   {
    "confidence": "high",
@@ -195,96 +222,69 @@
      "venue": "Bullish"
     },
     {
-     "usd_volume": 1601923.59,
-     "venue": "Gate.io"
-    },
-    {
      "usd_volume": 1233174.56,
      "venue": "Bybit"
+    },
+    {
+     "usd_volume": 1018013.79,
+     "venue": "Gate.io"
     },
     {
      "usd_volume": 749328.79,
      "venue": "OKX"
     }
    ],
-   "inbound_usd": 67442608.31,
+   "inbound_usd": 66699085.7,
    "local_venues": [
     {
-     "usd_volume": 67444568.62,
+     "usd_volume": 66701046.01,
      "venue": "Bitpanda"
     }
    ],
    "market": "AUT",
    "name": "Austria",
-   "net_usd": 67440648.0,
+   "net_usd": 66697125.39,
    "outbound_usd": 1960.31,
    "region": "ECA",
-   "total_usd": 67444568.62,
-   "transfer_count": 108
-  },
-  {
-   "confidence": "high",
-   "counterparties": [
-    {
-     "usd_volume": 59955046.0,
-     "venue": "Bitfinex"
-    },
-    {
-     "usd_volume": 149808.3,
-     "venue": "Uphold"
-    }
-   ],
-   "inbound_usd": 0.0,
-   "local_venues": [
-    {
-     "usd_volume": 60104854.3,
-     "venue": "Upbit"
-    }
-   ],
-   "market": "KOR",
-   "name": "Korea, Rep.",
-   "net_usd": -60104854.3,
-   "outbound_usd": 60104854.3,
-   "region": "EAP",
-   "total_usd": 60104854.3,
-   "transfer_count": 5
+   "total_usd": 66701046.01,
+   "transfer_count": 103
   },
   {
    "confidence": "medium",
    "counterparties": [
     {
-     "usd_volume": 46657461.87,
+     "usd_volume": 45358270.01,
      "venue": "Bitfinex"
     },
     {
-     "usd_volume": 5904815.81,
+     "usd_volume": 5505070.28,
      "venue": "Binance"
     }
    ],
-   "inbound_usd": 46657461.87,
+   "inbound_usd": 45358270.01,
    "local_venues": [
     {
-     "usd_volume": 46657461.87,
+     "usd_volume": 45358270.01,
      "venue": "Luno"
     },
     {
-     "usd_volume": 5904815.81,
+     "usd_volume": 5505070.28,
      "venue": "AltCoinTrader"
     }
    ],
    "market": "ZAF",
    "name": "South Africa",
-   "net_usd": 40752646.06,
-   "outbound_usd": 5904815.81,
+   "net_usd": 39853199.73,
+   "outbound_usd": 5505070.28,
    "region": "SSA",
-   "total_usd": 52562277.68,
-   "transfer_count": 63
+   "total_usd": 50863340.29,
+   "transfer_count": 61
   },
   {
    "confidence": "medium",
    "counterparties": [
     {
-     "usd_volume": 41089779.65,
+     "usd_volume": 40341110.89,
      "venue": "Binance"
     },
     {
@@ -296,26 +296,26 @@
      "venue": "Cobo"
     }
    ],
-   "inbound_usd": 41173556.68,
+   "inbound_usd": 40424887.92,
    "local_venues": [
     {
-     "usd_volume": 41179499.62,
+     "usd_volume": 40430830.86,
      "venue": "Coinhako"
     }
    ],
    "market": "SGP",
    "name": "Singapore",
-   "net_usd": 41167613.74,
+   "net_usd": 40418944.98,
    "outbound_usd": 5942.94,
    "region": "EAP",
-   "total_usd": 41179499.62,
-   "transfer_count": 67
+   "total_usd": 40430830.86,
+   "transfer_count": 66
   },
   {
    "confidence": "high",
    "counterparties": [
     {
-     "usd_volume": 35433790.05,
+     "usd_volume": 33579065.2,
      "venue": "Binance"
     },
     {
@@ -327,26 +327,26 @@
      "venue": "Stake.com"
     }
    ],
-   "inbound_usd": 36293220.75,
+   "inbound_usd": 34438495.9,
    "local_venues": [
     {
-     "usd_volume": 36293224.75,
+     "usd_volume": 34438499.9,
      "venue": "Lemon Cash"
     }
    ],
    "market": "ARG",
    "name": "Argentina",
-   "net_usd": 36293216.75,
+   "net_usd": 34438491.9,
    "outbound_usd": 4.0,
    "region": "LAC",
-   "total_usd": 36293224.75,
-   "transfer_count": 277
+   "total_usd": 34438499.9,
+   "transfer_count": 276
   },
   {
    "confidence": "high",
    "counterparties": [
     {
-     "usd_volume": 27558781.24,
+     "usd_volume": 27688805.28,
      "venue": "Binance"
     },
     {
@@ -366,10 +366,10 @@
      "venue": "Gate.io"
     }
    ],
-   "inbound_usd": 27826375.64,
+   "inbound_usd": 27956399.68,
    "local_venues": [
     {
-     "usd_volume": 27826225.71,
+     "usd_volume": 27956249.75,
      "venue": "CoinSpot"
     },
     {
@@ -379,34 +379,34 @@
    ],
    "market": "AUS",
    "name": "Australia",
-   "net_usd": 27695248.59,
+   "net_usd": 27825272.63,
    "outbound_usd": 131127.05,
    "region": "EAP",
-   "total_usd": 27957502.69,
+   "total_usd": 28087526.73,
    "transfer_count": 145
   },
   {
    "confidence": "medium",
    "counterparties": [
     {
-     "usd_volume": 7770709.55,
+     "usd_volume": 8022292.07,
      "venue": "Gate.io"
     }
    ],
-   "inbound_usd": 7770709.55,
+   "inbound_usd": 8022292.07,
    "local_venues": [
     {
-     "usd_volume": 7770709.55,
+     "usd_volume": 8022292.07,
      "venue": "Cryptal"
     }
    ],
    "market": "GEO",
    "name": "Georgia",
-   "net_usd": 7770709.55,
+   "net_usd": 8022292.07,
    "outbound_usd": 0.0,
    "region": "ECA",
-   "total_usd": 7770709.55,
-   "transfer_count": 932
+   "total_usd": 8022292.07,
+   "transfer_count": 958
   },
   {
    "confidence": "high",
@@ -601,24 +601,24 @@
    "confidence": "high",
    "counterparties": [
     {
-     "usd_volume": 574.1,
+     "usd_volume": 582.21,
      "venue": "Binance"
     }
    ],
-   "inbound_usd": 423.47,
+   "inbound_usd": 431.58,
    "local_venues": [
     {
-     "usd_volume": 574.1,
+     "usd_volume": 582.21,
      "venue": "Bitkub"
     }
    ],
    "market": "THA",
    "name": "Thailand",
-   "net_usd": 272.84,
+   "net_usd": 280.95,
    "outbound_usd": 150.63,
    "region": "EAP",
-   "total_usd": 574.1,
-   "transfer_count": 14
+   "total_usd": 582.21,
+   "transfer_count": 15
   },
   {
    "confidence": "high",
@@ -626,22 +626,26 @@
     {
      "usd_volume": 8.26,
      "venue": "Binance"
+    },
+    {
+     "usd_volume": 5.0,
+     "venue": "Bitfinex"
     }
    ],
    "inbound_usd": 8.26,
    "local_venues": [
     {
-     "usd_volume": 8.26,
+     "usd_volume": 13.26,
      "venue": "Bitso"
     }
    ],
    "market": "MEX",
    "name": "Mexico",
-   "net_usd": 8.26,
-   "outbound_usd": 0.0,
+   "net_usd": 3.26,
+   "outbound_usd": 5.0,
    "region": "LAC",
-   "total_usd": 8.26,
-   "transfer_count": 1
+   "total_usd": 13.26,
+   "transfer_count": 2
   }
  ],
  "source_name": "Dune Analytics + curated venue map",
@@ -700,7 +704,7 @@
  },
  "window": {
   "days": 91,
-  "end": "2026-09-11",
-  "start": "2026-06-13"
+  "end": "2026-09-13",
+  "start": "2026-06-15"
  }
 }
