@@ -142,8 +142,15 @@
    "estimated_result_credits": 14.6,
    "executed": true,
    "rows": 2434
+  },
+  {
+   "at": "2026-09-17T11:35:50+00:00",
+   "datapoints": 14616,
+   "estimated_result_credits": 14.62,
+   "executed": true,
+   "rows": 2436
   }
  ],
- "last_execution_at": "2026-09-16T11:26:29+00:00",
- "last_execution_id": "01M2MZFRWV1R1YG18K4WG0M49M"
+ "last_execution_at": "2026-09-17T11:35:50+00:00",
+ "last_execution_id": "01M2QJDKYYNGDT29TRBBAA56DC"
 }
