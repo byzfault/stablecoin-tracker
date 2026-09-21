@@ -1,15 +1,183 @@
 {
- "data_as_of": "2026-09-20T11:17:07+00:00",
+ "data_as_of": "2026-09-21T12:42:12+00:00",
  "date_range": {
-  "end": "2026-09-20",
-  "start": "2026-06-22"
+  "end": "2026-09-21",
+  "start": "2026-06-23"
  },
  "executed_this_run": true,
- "fetched_at": "2026-09-20T11:17:07+00:00",
+ "fetched_at": "2026-09-21T12:42:12+00:00",
  "notes": [],
  "query_id": 8425636,
- "row_count": 2440,
+ "row_count": 2436,
  "rows": [
+  {
+   "day": "2026-09-21",
+   "from_venue": "Binance",
+   "to_venue": "Nexo",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 2498159.7
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Binance",
+   "to_venue": "CoinSpot",
+   "token": "USDT",
+   "transfer_count": 2,
+   "usd_volume": 1499203.4
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "KuCoin",
+   "to_venue": "WhiteBIT",
+   "token": "USDC",
+   "transfer_count": 2,
+   "usd_volume": 799659.27
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Bitfinex",
+   "to_venue": "Nexo",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 799543.45
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Binance",
+   "to_venue": "Coinhako",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 760090.28
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Coinbase",
+   "to_venue": "Bitpanda",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 703051.65
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Gate.io",
+   "to_venue": "Bitpanda",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 400053.76
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Binance",
+   "to_venue": "Reku",
+   "token": "USDT",
+   "transfer_count": 4,
+   "usd_volume": 304520.43
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Coinbase",
+   "to_venue": "MoonPay",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 299792.7
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "OKX",
+   "to_venue": "MoonPay",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 99930.8
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Gate.io",
+   "to_venue": "Cryptal",
+   "token": "USDT",
+   "transfer_count": 14,
+   "usd_volume": 86680.62
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Aeroswap",
+   "to_venue": "Binance",
+   "token": "USDT",
+   "transfer_count": 24,
+   "usd_volume": 16710.5
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Bitstamp",
+   "to_venue": "Simplex",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 4996.71
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "Aeroswap",
+   "to_venue": "Binance",
+   "token": "USDC",
+   "transfer_count": 3,
+   "usd_volume": 2249.16
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "BTC Markets",
+   "to_venue": "MEXC",
+   "token": "USDT",
+   "transfer_count": 2,
+   "usd_volume": 510.41
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "BTC Markets",
+   "to_venue": "KuCoin",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 202.49
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "KuCoin",
+   "to_venue": "Binance",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 201.43
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "BTC Markets",
+   "to_venue": "BitMEX",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 47.26
+  },
+  {
+   "day": "2026-09-21",
+   "from_venue": "MEXC",
+   "to_venue": "Binance",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 39.25
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "Binance",
+   "to_venue": "Indodax",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 1998543.7
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "Binance",
+   "to_venue": "Nexo",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 499642.7
+  },
   {
    "day": "2026-09-20",
    "from_venue": "Binance",
@@ -28,6 +196,14 @@
   },
   {
    "day": "2026-09-20",
+   "from_venue": "Coinbase",
+   "to_venue": "MoonPay",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 299843.7
+  },
+  {
+   "day": "2026-09-20",
    "from_venue": "ChainUp",
    "to_venue": "Binance",
    "token": "USDT",
@@ -39,24 +215,56 @@
    "from_venue": "Gate.io",
    "to_venue": "Cryptal",
    "token": "USDT",
-   "transfer_count": 13,
-   "usd_volume": 82250.07
+   "transfer_count": 26,
+   "usd_volume": 124846.1
   },
   {
    "day": "2026-09-20",
    "from_venue": "Binance",
    "to_venue": "Aeroswap",
    "token": "USDT",
+   "transfer_count": 3,
+   "usd_volume": 105621.35
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "OKX",
+   "to_venue": "MoonPay",
+   "token": "USDT",
    "transfer_count": 1,
-   "usd_volume": 49828.62
+   "usd_volume": 99920.7
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "ChangeNOW",
+   "to_venue": "KuCoin",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 52750.25
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "Binance",
+   "to_venue": "Lemon Cash",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 50238.25
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "Binance",
+   "to_venue": "XT.com",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 49955.74
   },
   {
    "day": "2026-09-20",
    "from_venue": "Aeroswap",
    "to_venue": "Binance",
    "token": "USDT",
-   "transfer_count": 10,
-   "usd_volume": 4425.48
+   "transfer_count": 36,
+   "usd_volume": 36249.8
   },
   {
    "day": "2026-09-20",
@@ -89,6 +297,14 @@
    "token": "USDT",
    "transfer_count": 2,
    "usd_volume": 210.23
+  },
+  {
+   "day": "2026-09-20",
+   "from_venue": "OKX",
+   "to_venue": "Binance",
+   "token": "USDT",
+   "transfer_count": 1,
+   "usd_volume": 9.99
   },
   {
    "day": "2026-09-19",
@@ -704,7 +920,7 @@
    "to_venue": "Simplex",
    "token": "USDC",
    "transfer_count": 7,
-   "usd_volume": 34997.47
+   "usd_volume": 34997.46
   },
   {
    "day": "2026-09-17",
@@ -2576,7 +2792,7 @@
    "to_venue": "Simplex",
    "token": "USDC",
    "transfer_count": 5,
-   "usd_volume": 25004.89
+   "usd_volume": 25004.9
   },
   {
    "day": "2026-09-08",
@@ -12704,7 +12920,7 @@
    "to_venue": "Simplex",
    "token": "USDC",
    "transfer_count": 4,
-   "usd_volume": 19999.98
+   "usd_volume": 19999.97
   },
   {
    "day": "2026-07-22",
@@ -17672,7 +17888,7 @@
    "to_venue": "Simplex",
    "token": "USDC",
    "transfer_count": 7,
-   "usd_volume": 34992.65
+   "usd_volume": 34992.64
   },
   {
    "day": "2026-06-30",
@@ -19100,22 +19316,6 @@
   },
   {
    "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "Indodax",
-   "token": "USDT",
-   "transfer_count": 2,
-   "usd_volume": 3495975.7
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Bullish",
-   "to_venue": "Bitpanda",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 2025288.62
-  },
-  {
-   "day": "2026-06-23",
    "from_venue": "FalconX",
    "to_venue": "Binance",
    "token": "USDT",
@@ -19135,16 +19335,8 @@
    "from_venue": "ChangeNOW",
    "to_venue": "Binance",
    "token": "USDT",
-   "transfer_count": 9,
-   "usd_volume": 947393.98
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "Matrixport",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 699267.4
+   "transfer_count": 7,
+   "usd_volume": 857484.66
   },
   {
    "day": "2026-06-23",
@@ -19159,16 +19351,8 @@
    "from_venue": "Binance",
    "to_venue": "ChangeNOW",
    "token": "USDT",
-   "transfer_count": 13,
-   "usd_volume": 486054.07
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "Coinhako",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 481898.7
+   "transfer_count": 9,
+   "usd_volume": 328273.65
   },
   {
    "day": "2026-06-23",
@@ -19191,32 +19375,16 @@
    "from_venue": "Binance",
    "to_venue": "XT.com",
    "token": "USDT",
-   "transfer_count": 2,
-   "usd_volume": 249721.11
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "CoinSpot",
-   "token": "USDT",
    "transfer_count": 1,
-   "usd_volume": 149842.98
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "Aeroswap",
-   "token": "USDT",
-   "transfer_count": 23,
-   "usd_volume": 127796.7
+   "usd_volume": 199790.3
   },
   {
    "day": "2026-06-23",
    "from_venue": "ChangeNOW",
    "to_venue": "Binance",
    "token": "USDC",
-   "transfer_count": 10,
-   "usd_volume": 119202.86
+   "transfer_count": 8,
+   "usd_volume": 106114.56
   },
   {
    "day": "2026-06-23",
@@ -19228,19 +19396,11 @@
   },
   {
    "day": "2026-06-23",
-   "from_venue": "OKX",
-   "to_venue": "MoonPay",
+   "from_venue": "Binance",
+   "to_venue": "Aeroswap",
    "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 99902.4
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "KuCoin",
-   "to_venue": "Cryptomus",
-   "token": "USDC",
-   "transfer_count": 2,
-   "usd_volume": 89993.92
+   "transfer_count": 16,
+   "usd_volume": 81273.06
   },
   {
    "day": "2026-06-23",
@@ -19252,19 +19412,11 @@
   },
   {
    "day": "2026-06-23",
-   "from_venue": "Bitget",
-   "to_venue": "ChangeNOW",
-   "token": "USDT",
-   "transfer_count": 2,
-   "usd_volume": 43953.94
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "Coinstore",
-   "token": "USDT",
+   "from_venue": "KuCoin",
+   "to_venue": "Cryptomus",
+   "token": "USDC",
    "transfer_count": 1,
-   "usd_volume": 39960.57
+   "usd_volume": 39997.32
   },
   {
    "day": "2026-06-23",
@@ -19279,16 +19431,8 @@
    "from_venue": "Gate.io",
    "to_venue": "Cryptal",
    "token": "USDT",
-   "transfer_count": 4,
-   "usd_volume": 13965.29
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "ChangeNOW",
-   "to_venue": "KuCoin",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 6437.63
+   "transfer_count": 2,
+   "usd_volume": 7664.02
   },
   {
    "day": "2026-06-23",
@@ -19308,35 +19452,11 @@
   },
   {
    "day": "2026-06-23",
-   "from_venue": "Revolut",
-   "to_venue": "Bitvavo",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 1017.53
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Binance",
-   "to_venue": "YouHodler",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 238.86
-  },
-  {
-   "day": "2026-06-23",
    "from_venue": "Binance",
    "to_venue": "YouHodler",
    "token": "USDT",
    "transfer_count": 2,
    "usd_volume": 171.79
-  },
-  {
-   "day": "2026-06-23",
-   "from_venue": "Bitget",
-   "to_venue": "ChangeNOW",
-   "token": "USDC",
-   "transfer_count": 2,
-   "usd_volume": 72.63
   },
   {
    "day": "2026-06-23",
@@ -19359,8 +19479,16 @@
    "from_venue": "Gate.io",
    "to_venue": "Binance",
    "token": "USDT",
-   "transfer_count": 2,
-   "usd_volume": 50.59
+   "transfer_count": 1,
+   "usd_volume": 47.7
+  },
+  {
+   "day": "2026-06-23",
+   "from_venue": "Bitget",
+   "to_venue": "ChangeNOW",
+   "token": "USDC",
+   "transfer_count": 1,
+   "usd_volume": 10.83
   },
   {
    "day": "2026-06-23",
@@ -19369,166 +19497,6 @@
    "token": "USDT",
    "transfer_count": 1,
    "usd_volume": 8.26
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Bitstamp",
-   "to_venue": "Revolut",
-   "token": "USDC",
-   "transfer_count": 2,
-   "usd_volume": 5108140.04
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "Brasil Bitcoin",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 2460543.89
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "ChangeNOW",
-   "to_venue": "Binance",
-   "token": "USDT",
-   "transfer_count": 14,
-   "usd_volume": 1222815.94
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "Indodax",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 999105.6
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "ChangeNOW",
-   "token": "USDT",
-   "transfer_count": 8,
-   "usd_volume": 745406.49
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "FalconX",
-   "to_venue": "Bitpanda",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 469980.73
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Gate.io",
-   "to_venue": "Cryptal",
-   "token": "USDT",
-   "transfer_count": 6,
-   "usd_volume": 271475.21
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "FalconX",
-   "to_venue": "Brasil Bitcoin",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 155010.85
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "Lemon Cash",
-   "token": "USDC",
-   "transfer_count": 2,
-   "usd_volume": 101600.68
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "OKX",
-   "to_venue": "MoonPay",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 99902.1
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "Reku",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 99883.6
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "Indodax",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 59993.9
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Coinbase",
-   "to_venue": "BitPay",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 39986.2
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "KuCoin",
-   "to_venue": "Cryptomus",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 19994.02
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Gate.io",
-   "to_venue": "Cryptal",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 19968.92
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "ChangeNOW",
-   "to_venue": "KuCoin",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 16116.83
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Binance",
-   "to_venue": "YouHodler",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 1065.13
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Aeroswap",
-   "to_venue": "Binance",
-   "token": "USDC",
-   "transfer_count": 1,
-   "usd_volume": 33.26
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Bybit",
-   "to_venue": "FixedFloat",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 10.04
-  },
-  {
-   "day": "2026-06-22",
-   "from_venue": "Zero Hash",
-   "to_venue": "Coinbase",
-   "token": "USDT",
-   "transfer_count": 1,
-   "usd_volume": 9.67
   }
  ],
  "source_name": "Dune Analytics",
