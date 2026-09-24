@@ -1,13 +1,6 @@
 {
  "credit_log": [
   {
-   "at": "2026-08-25T07:06:23+00:00",
-   "datapoints": 15528,
-   "estimated_result_credits": 15.53,
-   "executed": false,
-   "rows": 2588
-  },
-  {
    "at": "2026-08-26T07:06:25+00:00",
    "datapoints": 15486,
    "estimated_result_credits": 15.49,
@@ -179,6 +172,11 @@
    "estimated_result_credits": 14.62,
    "executed": true,
    "rows": 2436
+  },
+  {
+   "at": "2026-09-24T11:39:45+00:00",
+   "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
+   "executed": false
   }
  ],
  "last_execution_at": "2026-09-23T11:29:03+00:00",
