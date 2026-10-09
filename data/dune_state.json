@@ -1,11 +1,6 @@
 {
  "credit_log": [
   {
-   "at": "2026-09-09T11:17:04+00:00",
-   "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
-   "executed": false
-  },
-  {
    "at": "2026-09-10T11:13:21+00:00",
    "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
    "executed": false
@@ -173,6 +168,11 @@
   },
   {
    "at": "2026-10-08T13:21:36+00:00",
+   "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
+   "executed": false
+  },
+  {
+   "at": "2026-10-09T13:10:16+00:00",
    "error": "POST /query/8425636/execute failed after 3 attempts: 400 Client Error: Bad Request for url: https://api.dune.com/api/v1/query/8425636/execute",
    "executed": false
   }
