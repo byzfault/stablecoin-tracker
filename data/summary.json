@@ -1,21 +1,21 @@
 {
- "as_of": 1793577600,
- "change_30d": -9318374520,
- "change_30d_pct": -3.04,
- "fetched_at": "2026-11-02T15:40:07+00:00",
+ "as_of": 1793664000,
+ "change_30d": -11213589633,
+ "change_30d_pct": -3.65,
+ "fetched_at": "2026-11-03T14:04:00+00:00",
  "peg_type": "peggedUSD",
  "source_name": "DefiLlama",
  "source_url": "https://stablecoins.llama.fi",
  "top_chain": {
   "name": "Ethereum",
-  "share_pct": 47.61,
-  "supply": 141362839116
+  "share_pct": 47.17,
+  "supply": 138017203915
  },
  "top_issuer": {
   "name": "USDT",
-  "share_pct": 60.21,
-  "supply": 181143983041
+  "share_pct": 60.29,
+  "supply": 178781281344
  },
- "total_supply": 297673351949,
+ "total_supply": 295864714783,
  "update_cadence": "daily"
 }
